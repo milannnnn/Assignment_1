@@ -2,6 +2,7 @@ package assignment1_matteo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -105,6 +106,9 @@ public class ReadXML {
 		
 		catch (FileNotFoundException e) {
 			System.out.println("The specified XML files were not found, please check the given path / filename!!!");
+		}
+		catch (IOException e) { 
+			System.out.println("I/O Problems (Read,Writing,Permissions,Space...)!!!");
 		}
 		catch(Exception e){
 			e.printStackTrace();
