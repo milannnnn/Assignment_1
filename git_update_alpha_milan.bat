@@ -1,3 +1,4 @@
+git pull origin
 git branch alpha_milan
 git checkout alpha_milan
 git add .
