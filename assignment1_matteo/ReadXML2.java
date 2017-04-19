@@ -3,6 +3,8 @@ package assignment1_matteo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,8 +15,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
-public class ReadXML {
-	public static void main(String[] args, boolean customPath, String EQpath, String SSHpath){
+public class ReadXML2 {
+	public static String main(String[] args, boolean customPath, String EQpath, String SSHpath){
+		
+		String output = null;
 		
 		// Attributes List for every CIM object
 		String[] BaseVoltageAttribute = {"cim:BaseVoltage.nominalVoltage"};
@@ -44,97 +48,119 @@ public class ReadXML {
 		AttList.add(PowerTransformerEndAttribute);
 		AttList.add(BreakerAttribute);
 		AttList.add(RatioTapChangerAttribute);
+		
+		try {
+				PrintWriter parsedtext = new PrintWriter("parsedtext.txt");
+				StringWriter totText = new StringWriter();
+					
+			try{
 				
-		try{
-			File XmlFileEQ;
-			// Read XML file EQ
-			if(customPath == true){
-				XmlFileEQ = new File (EQpath);
-			}
-			else{
-				XmlFileEQ = new File ("C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml");
-			}
-			// File XmlFileEQ = new File ("C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml");
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc_eq = dBuilder.parse(XmlFileEQ);
-			
-			// Read XML file SSH
-			File XmlFileSSH;
-			if(customPath == true){
-				XmlFileSSH = new File (SSHpath);
-			}
-			else{
-				XmlFileSSH = new File ("C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml");
-			}
-			// File XmlFileSSH = new File ("C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml");
-			Document doc_SSH = dBuilder.parse(XmlFileSSH);
-			
-			// normalize CIM XML file
-			doc_eq.getDocumentElement().normalize();
-			doc_SSH.getDocumentElement().normalize();
-			
-			ArrayList<NodeList> NodeListList = new ArrayList<NodeList>();
-//			String[] nodeListNames = {"bvList","subList","volList","guList","genList","rcList","ptList","ecList","pteList","bList","rtcList"};
-			// Array with all the CIM objects tags
-			String[] tagList = {"cim:BaseVoltage","cim:Substation","cim:VoltageLevel","cim:GeneratingUnit","cim:SynchronousMachine",
-					"cim:RegulatingControl","cim:PowerTransformer", "cim:EnergyConsumer","cim:PowerTransformerEnd","cim:Breaker","cim:RatioTapChanger"};
-			// It fill out the ArrayList "NodeListList", where each object is a list of nodes characterized by the same tag, i.e. newNodeList
-			for(int i=0; i<tagList.length; i++){
-				// Node list obtained looking for tags in EQ document
-				NodeList newNodeList1 = doc_eq.getElementsByTagName(tagList[i]);
-				// Node list obtained looking for tags in SSH document
-				NodeList newNodeList2 = doc_SSH.getElementsByTagName(tagList[i]);
-				// Some tags are not present in the SSH file, hence, we fill that list we the same not of list1, just to avoid handling an empty list
-				if(newNodeList2 == null || newNodeList2.getLength() == 0 ){
-					newNodeList2 = newNodeList1;
+				File XmlFileEQ;
+				// Read XML file EQ
+				if(customPath == true){
+					XmlFileEQ = new File (EQpath);
 				}
-				// both lists are added to the same ArrayList
-				// even position are then relative to NodeList1
-				// odd positions are relative to NodeList2
-				NodeListList.add(newNodeList1);
-				NodeListList.add(newNodeList2);
-			}
-			
-			
-			// … cycle through each list to extract required data
-			for(int k = 0; k < NodeListList.size(); k +=2){
-				// It extracts each element of NodeListList, called newNodeList, which is a list of nodes having the same tag 
-				System.out.println("\n" + "---------------------------------------" + "\n" + tagList[k/2] + "\n" + "---------------------------------------" + "\n");
-				NodeList newNodeList1 = NodeListList.get(k);
-				NodeList newNodeList2 = NodeListList.get(k+1);
-			
-				for (int i = 0; i < newNodeList1.getLength(); i++) {
-					// From the node list newNodeList, it extracts each node and invokes extractNode method
-					// newNodeList1 and newNodeList2 have the same length, because they are referred to the same CIM objects.
-					Node node1 = newNodeList1.item(i); 
-					Node node2 = newNodeList2.item(i);
-					extractNode(node1,node2,k,i,AttList,doc_eq);
+				else{
+					XmlFileEQ = new File ("C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml");
+				}
+				// File XmlFileEQ = new File ("C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml");
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc_eq = dBuilder.parse(XmlFileEQ);
+				
+				// Read XML file SSH
+				File XmlFileSSH;
+				if(customPath == true){
+					XmlFileSSH = new File (SSHpath);
+				}
+				else{
+					XmlFileSSH = new File ("C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml");
+				}
+				// File XmlFileSSH = new File ("C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml");
+				Document doc_SSH = dBuilder.parse(XmlFileSSH);
+				
+				// normalize CIM XML file
+				doc_eq.getDocumentElement().normalize();
+				doc_SSH.getDocumentElement().normalize();
+				
+				ArrayList<NodeList> NodeListList = new ArrayList<NodeList>();
+	//			String[] nodeListNames = {"bvList","subList","volList","guList","genList","rcList","ptList","ecList","pteList","bList","rtcList"};
+				// Array with all the CIM objects tags
+				String[] tagList = {"cim:BaseVoltage","cim:Substation","cim:VoltageLevel","cim:GeneratingUnit","cim:SynchronousMachine",
+						"cim:RegulatingControl","cim:PowerTransformer", "cim:EnergyConsumer","cim:PowerTransformerEnd","cim:Breaker","cim:RatioTapChanger"};
+				// It fill out the ArrayList "NodeListList", where each object is a list of nodes characterized by the same tag, i.e. newNodeList
+				for(int i=0; i<tagList.length; i++){
+					// Node list obtained looking for tags in EQ document
+					NodeList newNodeList1 = doc_eq.getElementsByTagName(tagList[i]);
+					// Node list obtained looking for tags in SSH document
+					NodeList newNodeList2 = doc_SSH.getElementsByTagName(tagList[i]);
+					// Some tags are not present in the SSH file, hence, we fill that list we the same not of list1, just to avoid handling an empty list
+					if(newNodeList2 == null || newNodeList2.getLength() == 0 ){
+						newNodeList2 = newNodeList1;
+					}
+					// both lists are added to the same ArrayList
+					// even position are then relative to NodeList1
+					// odd positions are relative to NodeList2
+					NodeListList.add(newNodeList1);
+					NodeListList.add(newNodeList2);
+				}
+				
+				
+				// … cycle through each list to extract required data
+				for(int k = 0; k < NodeListList.size(); k +=2){
+					// It extracts each element of NodeListList, called newNodeList, which is a list of nodes having the same tag 
+					parsedtext.println("\n" + "---------------------------------------" + "\n" + tagList[k/2] + "\n" + "---------------------------------------" + "\n");
+					totText.write("\n" + "---------------------------------------" + "\n" + tagList[k/2] + "\n" + "---------------------------------------" + "\n");
+					NodeList newNodeList1 = NodeListList.get(k);
+					NodeList newNodeList2 = NodeListList.get(k+1);
+				
+					for (int i = 0; i < newNodeList1.getLength(); i++) {
+						// From the node list newNodeList, it extracts each node and invokes extractNode method
+						// newNodeList1 and newNodeList2 have the same length, because they are referred to the same CIM objects.
+						Node node1 = newNodeList1.item(i); 
+						Node node2 = newNodeList2.item(i);
+						extractNode(node1,node2,k,i,AttList,doc_eq,parsedtext,totText);
+					}
 				}
 			}
+			
+			
+			catch (FileNotFoundException e) {
+				totText.write("The specified XML files were not found, please check the given path / filename!!!");
+			}
+			catch (IOException e) { 
+				totText.write("I/O Problems (Read,Writing,Permissions,Space...)!!!");
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			output = totText.toString();
+			System.out.println(output);
+			
+			parsedtext.close();
+			totText.close();
 		}
-		
-		
-		catch (FileNotFoundException e) {
-			System.out.println("The specified XML files were not found, please check the given path / filename!!!");
-		}
-		catch (IOException e) { 
-			System.out.println("I/O Problems (Read,Writing,Permissions,Space...)!!!");
-		}
-		catch(Exception e){
+		catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return output;
 		
 	}
 	
 	// Method to extract data and attributes from a node
-	public static void extractNode (Node node1, Node node2, int k, int i, ArrayList<String[]> AttList, Document doc_eq){
+	public static void extractNode (Node node1, Node node2, int k, int i, ArrayList<String[]> AttList, Document doc_eq,PrintWriter parsedtext,StringWriter totText){
 		// converts nodes to elements
 		Element element1 = (Element) node1;
 		Element element2 = (Element) node2;
 		// gets the element ID and prints it
 		String rfdID = element1.getAttribute("rdf:ID");
-		System.out.println( "\n" + (i+1) + ") rdfID: " + rfdID + "\n");
+		parsedtext.println( "\n" + (i+1) + ") rdfID: " + rfdID + "\n");
+		totText.write( "\n" + (i+1) + ") rdfID: " + rfdID + "\n");
 		// From the ArrayList "AttList", it extracts the array containing the data tags of a specific CIM object identified by k
 		String[] attributes = AttList.get(k/2);
 				
@@ -148,7 +174,8 @@ public class ReadXML {
 			
 				if(!name.isEmpty()){
 					// if the data is not empty it prints it out
-					System.out.println(attributes[l] + "\t" + name + "\n");
+					totText.write(attributes[l] + "\t" + name + "\n");
+					parsedtext.println(attributes[l] + "\t" + name + "\n");
 				}
 				else{
 					// if the data is empty it means that child has no data, just an attribute, so it reads the attribute
@@ -158,7 +185,8 @@ public class ReadXML {
 					// it read and prints the value of that attribute
 					String resourceID = nodelistIDelement.getAttribute("rdf:resource");
 	//				System.out.println("I'm using this");
-					System.out.println(attributes[l] + " rdf:resource=" + "\t" + resourceID + "\n");	
+					totText.write(attributes[l] + " rdf:resource=" + "\t" + resourceID + "\n");
+					parsedtext.println(attributes[l] + " rdf:resource=" + "\t" + resourceID + "\n");	
 				}			
 			}
 			// if the tags is not in EQ file, Java will throw a "java.lang.NullPointerException",
@@ -171,7 +199,8 @@ public class ReadXML {
 					// if the data is not empty it prints it out
 					if(!nameSSH.isEmpty()){
 						// if the data is not empty it prints it out
-						System.out.println(attributes[l] + "\t" + nameSSH + "\n");
+						totText.write(attributes[l] + "\t" + nameSSH + "\n");
+						parsedtext.println(attributes[l] + "\t" + nameSSH + "\n");
 					}
 					else{
 						// if the data is empty it means that child has no data, just an attribute, so it reads the attribute
@@ -181,7 +210,8 @@ public class ReadXML {
 						// it read and prints the value of that attribute
 						String resourceID2 = nodelistIDelement2.getAttribute("rdf:resource");
 		//				System.out.println("I'm using this");
-						System.out.println(attributes[l] + " rdf:resource=" + "\t" + resourceID2 + "\n");	
+						totText.write(attributes[l] + " rdf:resource=" + "\t" + resourceID2 + "\n");
+						parsedtext.println(attributes[l] + " rdf:resource=" + "\t" + resourceID2 + "\n");	
 					}
 				}
 				// if the tags is neither in EQ file, nor in the SSH file, Java will throw a "java.lang.NullPointerException",
@@ -213,7 +243,8 @@ public class ReadXML {
 					Element BVelement = (Element) BVnode;
 					String BVID = BVelement.getAttribute("rdf:resource");
 					// It prints out the tag "baseVolatge rdf:ID " and gives the found ID
-					System.out.println(attributes[l] + " rdf:ID" + "\t" + BVID + "\n");
+					totText.write(attributes[l] + " rdf:ID" + "\t" + BVID + "\n");
+					parsedtext.println(attributes[l] + " rdf:ID" + "\t" + BVID + "\n");
 					// it removes the hash from the ID
 					BVID = BVID.substring(1);
 		
@@ -231,7 +262,8 @@ public class ReadXML {
 					}			
 					// it gets the base voltage and prints it
 					String BV = baseVoltageEl.getElementsByTagName("cim:BaseVoltage.nominalVoltage").item(0).getTextContent();
-					System.out.println(attributes[l] + " = " + BV + "\n");
+					totText.write(attributes[l] + " = " + BV + "\n");
+					parsedtext.println(attributes[l] + " = " + BV + "\n");
 				}
 			}
 		}		
