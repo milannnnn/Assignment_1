@@ -88,8 +88,9 @@ public class MyParser {
 	// ###### Method for Extracting Simple Data (contained WITHIN Given Element) ######
 	public String searchForSimpleData(Element el, NodeList NL2, String data, String id){
 		String data_attr;
-		// First search for required tag in the EQ node!!!
+		// First search for required tag in the EQ element!!!
 		try{
+				// Look both inside the Tag and Attribute (check fishForData method)
 				data_attr = fishForData(el.getElementsByTagName(data).item(0));
 				return data_attr;
 		}
@@ -110,7 +111,7 @@ public class MyParser {
 				if(notFoundFlag){
 					throw new NullPointerException();
 				}
-				// If the ID was found, check for required data attribute (tag)
+				// If the ID was found, look for required data inside tag / attribute
 				data_attr = fishForData(el2.getElementsByTagName(data).item(0));
 				return data_attr;
 			}
@@ -118,7 +119,7 @@ public class MyParser {
 			catch(java.lang.NullPointerException e){
 				System.out.println("WARNING: Required data attribute not found (probably missing or misspelled)");
 				System.out.println("Please check the data field \""+data+"\" for the \""+id+"\" object!!!\n");
-				System.out.println("=> Program Intentionally Terminated (for your own good you dummy)");
+				System.out.println("=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
 				// Kill the program - Force the Human to correct its mistake (so it feels important)!!! 
 				// (otherwise we could have also continued the code by writing a NULL element)!!!
 				System.exit(0);
