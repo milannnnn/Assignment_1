@@ -119,7 +119,7 @@ public class ReadXML {
 			System.out.println("The specified XML files were not found, please check the given path / filename!!!");
 		}
 		catch (IOException e) { 
-			System.out.println("I/O Problems (Read,Writing,Permissions,Space...)!!!");
+			System.out.println("I/O Problems (Reading, Writing, Permissions, Disk Space,...)!!!");
 		}
 		catch(Exception e){
 			e.printStackTrace();
