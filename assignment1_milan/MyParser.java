@@ -127,8 +127,8 @@ public class MyParser {
 		return null;
 	}
 	
-	// -------------------------------------------------------------------------------
-	// ###### Method for Base Voltage Data (based on Given Equipment Container) ######
+	// -------------------------------------------------------------------------------------
+	// ###### Method for Base Voltage Data (from Given Equipment Container Reference) ######
 	public String searchForVoltageID(String req_volt_id, Document doc_eq){
 		
 		NodeList NL = doc_eq.getElementsByTagName("cim:VoltageLevel");
