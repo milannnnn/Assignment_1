@@ -121,7 +121,7 @@ public class MyParser {
 				System.out.println("Please check the data field \""+data+"\" for the \""+id+"\" object!!!\n");
 				System.out.println("=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
 				// Kill the program - Force the Human to correct its mistake (so it feels important)!!! 
-				// (otherwise we could have also continued the code by writing a NULL element)!!!
+				// (otherwise we could have also continued the PROGRAM by writing a NULL element)!!!
 				System.exit(0);
 			}						
 		}
@@ -136,12 +136,18 @@ public class MyParser {
 		for(int j=0; j<NL.getLength(); j++){
 			Element el = (Element) NL.item(j);
 			if(el.getAttribute("rdf:ID").equals(req_volt_id.substring(1))){
-				return el.getElementsByTagName("cim:IdentifiedObject.name").item(0).getTextContent();
+				//return el.getElementsByTagName("cim:IdentifiedObject.name").item(0).getTextContent();
 				//return el.getAttribute("rdf:ID");
+				el = (Element)el.getElementsByTagName("cim:VoltageLevel.BaseVoltage").item(0);
+				String tmpStr = el.getAttribute("rdf:resource");
+				if(! tmpStr.equals("")){
+					return tmpStr.substring(1);
+				}
+				break;
 			}
 		}
-		System.out.println("WARNING: Required Base Voltage ID ("+req_volt_id.substring(1)+") not found");
-		System.out.println("=> Program Intentionally Terminated (please check your EQ XML file)");
+		System.out.println("WARNING: Required Base Voltage ID not found (check Voltage Level "+req_volt_id.substring(1)+")");
+		System.out.println("=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
 		System.exit(0);
 		return null;
 	}
