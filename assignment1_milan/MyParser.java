@@ -13,80 +13,99 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
+// TODO - Maybe update it so that it can read multiple children tags with the same name (not just to read the first and finish)!!!
+
 public class MyParser {
 	
-	public ArrayList<MyObject> parseXML(String eq_path, String ssh_path, String object, String[] data){
-	// Parses the given CIM XML files (EQ and SSH) for required object with given data fields
-	// and returns an Array List of found objects with filled data fields
-	// 		ObjectList -> generated list of found objects (check class MyObject)
-	//		eq_path    -> file path to the EQ CIM XML file
-	//		ssh_path   -> file path to the SSH CIM XML file
+	// --------------------------------------------------------------------------------------------------
+    //###################################################################################################
+	public Document readFile(String file_path){
+	// Method for Loading and Normalizing a XML File
+	//
+	// doc       -> normalized XML document
+	// file_path -> path to desired XML file
+		
+		Document doc = null;
+		try{			
+			// Read EQ XML file
+			File xmlFile = new File (file_path);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(xmlFile);
+			doc.getDocumentElement().normalize();
+		}
+			
+		// ###### Catching Common Exceptions ######
+		catch (FileNotFoundException e){
+			System.out.println("The specified XML file was not found, please check the given path:");
+			System.out.println(file_path);
+			terminateProgram();
+		}
+		catch (IOException e){ 
+			System.out.println("I/O/Handling Problems (reading, writing, permissions, space, etc.), please check given path:");
+			System.out.println(file_path);
+			terminateProgram();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			terminateProgram();
+		}
+		return doc;
+	}
+	
+	// -------------------------------------------------------------------------------------------------------------
+    //##############################################################################################################
+	public ArrayList<MyObject> parseXML(Document doc_eq, Document doc_ssh, String object, String[] data){
+	// Method for Parsing given CIM XML files (EQ and SSH) for Given Object over Required Data Fields
+	// (returns an Array List of found objects with filled in data fields - check class MyObject)
+	//
+	// 		ObjectList -> generated list of parsed objects
+	//		doc_eq     -> normalized EQ  CIM XML document
+	//		doc_SSH    -> normalized SSH CIM XML document
 	//		object     -> required object name (identifier)
 	//		data       -> list of wanted data fields names
 		
 		ArrayList<MyObject> ObjectList = new ArrayList<MyObject>();
-				
-		try{			
-			// Read EQ XML file
-			File XmlFileEQ = new File (eq_path);
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc_eq = dBuilder.parse(XmlFileEQ);
-			doc_eq.getDocumentElement().normalize();
-			
-			// Read the SSH XML file
-			File XmlFileSSH = new File (ssh_path);
-			Document doc_SSH = dBuilder.parse(XmlFileSSH);
-			doc_SSH.getDocumentElement().normalize();
 
-			// Find all Elements with Required Object
-			NodeList NL1 = doc_eq.getElementsByTagName(object);
-			NodeList NL2 = doc_SSH.getElementsByTagName(object);
-			
-			// Parse all Elements found in the EQ node list (since all elements from SSH are already contained within EQ)
-			for(int j=0; j<NL1.getLength(); j++){
-				Element el = (Element) NL1.item(j);
-				String id = el.getAttribute("rdf:ID");
-				String[] data_attr = new String[data.length];
-				// Parse over all Required Data fields
-				for(int k=0; k<data.length; k++){
-					// If we are looking for the Base Voltage (which is not contained within the element) 
-					// First find the EqContainer, and then from that we can find the corresponding VoltLevel
-					if(data[k].equals("baseVoltage")){
-						String req_volt_id = searchForSimpleData(el,NL2,"cim:Equipment.EquipmentContainer",id);
-						data_attr[k] =  searchForVoltageID(req_volt_id, doc_eq);
-					}
-					// If we are looking for other simple data (already contained within element) - we parse normally
-					else{
-						data_attr[k] = searchForSimpleData(el, NL2, data[k], id);
-					}
+		// Find all Elements with Required Object
+		NodeList NL1 = doc_eq.getElementsByTagName(object);
+		NodeList NL2 = doc_ssh.getElementsByTagName(object);
+		
+		// Parse all Elements found in the EQ node list (since all elements from SSH are already contained within EQ)
+		for(int j=0; j<NL1.getLength(); j++){
+			Element el = (Element) NL1.item(j);
+			String id = el.getAttribute("rdf:ID");
+			String[] data_attr = new String[data.length];
+			// Parse over all Required Data fields
+			for(int k=0; k<data.length; k++){
+				// If we are looking for the Base Voltage (which is not contained within the element) 
+				// First find the EqContainer, and then from that we can find the corresponding VoltLevel
+				if(data[k].equals("baseVoltage")){
+					String req_volt_id = searchForSimpleData(el,NL2,"cim:Equipment.EquipmentContainer",id);
+					data_attr[k] =  searchForVoltageID(req_volt_id, doc_eq);
 				}
-				// Push the acquired object into the Array List
-				ObjectList.add(new MyObject(object,id,data,data_attr));
+				// If we are looking for other simple data (already contained within element) - we parse normally
+				else{
+					data_attr[k] = searchForSimpleData(el, NL2, data[k], id);
+				}
 			}
+			// Push the acquired object into the Array List
+			ObjectList.add(new MyObject(object,id,data,data_attr));
 		}
 		
-		// ###### Catching Some Common Exceptions ######
-		catch (FileNotFoundException e){
-			System.out.println("The specified XML files were not found, please check the given path / filename!!!");
-		}
-		catch (IOException e){ 
-			System.out.println("I/O/Handling Problems - Please Check Reading, Writing, Permissions, Space, etc!!!");
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
 		return ObjectList;
 	}
-
-	// #####################################################################
-	// ##### ADDITIONAL METHODS USED INSIDE THE MAIN "parseXML" METHOD #####
-	// #####################################################################	
 	
-	
-	// --------------------------------------------------------------------------------
-	// ###### Method for Extracting Simple Data (contained WITHIN Given Element) ######
+	// --------------------------------------------------------------------------------------------------
+    //###################################################################################################
 	public String searchForSimpleData(Element el, NodeList NL2, String data, String id){
+	// Method for Extracting Required Simple Data (contained within the EQ node or its SSH counterpart)
+	//
+	// el 	-> given EQ element
+	// NL2 	-> SSH node list of required object
+	// data	-> required data
+	// id	-> ID of given element
+		
 		String data_attr;
 		// First search for required tag in the EQ element!!!
 		try{
@@ -118,20 +137,25 @@ public class MyParser {
 			// If it still throws an exception we have a problem with required data field!!!
 			catch(java.lang.NullPointerException e){
 				System.out.println("WARNING: Required data attribute not found (probably missing or misspelled)");
-				System.out.println("Please check the data field \""+data+"\" for the \""+id+"\" object!!!\n");
-				System.out.println("=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
+				System.out.println("Please check for data field \""+data+"\" inside \""+id+"\" object!!!\n");
+				
 				// Kill the program - Force the Human to correct its mistake (so it feels important)!!! 
 				// (otherwise we could have also continued the PROGRAM by writing a NULL element)!!!
-				System.exit(0);
+				terminateProgram();
 			}						
 		}
 		return null;
 	}
 	
-	// -------------------------------------------------------------------------------------
-	// ###### Method for Base Voltage Data (from Given Equipment Container Reference) ######
+	// --------------------------------------------------------------------------------------------------
+    //###################################################################################################
 	public String searchForVoltageID(String req_volt_id, Document doc_eq){
-		
+	// Method for Extracting Base Voltage ID Data - not contained within the analyzed EQ/SSH element
+	// (first it finds the referenced Voltage Level node, then it reads the Base Voltage attribute)
+	// 
+	// req_volt_id	-> given voltage level ID (taken from equipment container)
+	// doc_eq		-> normalized EQ document
+
 		NodeList NL = doc_eq.getElementsByTagName("cim:VoltageLevel");
 		for(int j=0; j<NL.getLength(); j++){
 			Element el = (Element) NL.item(j);
@@ -141,21 +165,22 @@ public class MyParser {
 				el = (Element)el.getElementsByTagName("cim:VoltageLevel.BaseVoltage").item(0);
 				String tmpStr = el.getAttribute("rdf:resource");
 				if(! tmpStr.equals("")){
+					// remove the '#' from the start of the string
 					return tmpStr.substring(1);
 				}
 				break;
 			}
 		}
 		System.out.println("WARNING: Required Base Voltage ID not found (check Voltage Level "+req_volt_id.substring(1)+")");
-		System.out.println("=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
-		System.exit(0);
+		terminateProgram();
 		return null;
 	}
 	
-	// ----------------------------------------------------------------------------------------
-	// ###### Method that Searches for Required Data (first in tags, then in attributes) ######
+	// --------------------------------------------------------------------------------------------------
+    //###################################################################################################
 	public String fishForData(Node nd){
-		
+	// Method for Extracting Required Data Contained within Given Node (in Tags or Attributes)
+
 		// If the tag is empty, check the "rdf:resource" attribute
 		if(nd.getTextContent().equals("")){
 			return ((Element)nd).getAttribute("rdf:resource");
@@ -165,6 +190,14 @@ public class MyParser {
 		else{
 			return nd.getTextContent();
 		}
+	}
+	
+	// --------------------------------------------------------------------------------------------------
+    //###################################################################################################
+	public void terminateProgram(){
+	// Method for terminating the program (in case of exceptions and errors)
+		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
+		System.exit(0);
 	}
 
 }

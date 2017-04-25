@@ -1,6 +1,7 @@
 package assignment1_milan;
 
 import java.util.ArrayList;
+import org.w3c.dom.Document;
 
 public class Test {
 
@@ -18,11 +19,14 @@ public class Test {
 		
 //		String object = "cim:SynchronousMachine";
 //		String[] load_data = {"cim:IdentifiedObject.name","cim:RotatingMachine.ratedS","cim:RotatingMachine.p","cim:RotatingMachine.q","cim:RotatingMachine.GeneratingUnit",
-//				"cim:RegulatingCondEq.RegulatingControl", "cim:Equipment.EquipmentContainer"};
+//				"cim:RegulatingCondEq.RegulatingControl", "cim:Equipment.EquipmentContainer","baseVoltage"};
 		
-		//MyParser parser = new MyParser();
 		MyParser parser = new MyParser();
-		ArrayList<MyObject> objects = parser.parseXML(eq_path, ssh_path, object, load_data);
+		
+		Document doc_eq  = parser.readFile( eq_path);
+		Document doc_ssh = parser.readFile(ssh_path);
+		
+		ArrayList<MyObject> objects = parser.parseXML(doc_eq, doc_ssh, object, load_data);
 		
 		for(int k=0;k<objects.size();k++){
 			objects.get(k).printOut(k+1);
