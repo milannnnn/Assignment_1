@@ -1,4 +1,4 @@
-package assignment1_milan;
+package assignment1;
 
 import java.io.File;
 import java.io.FileNotFoundException;

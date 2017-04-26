@@ -1,4 +1,4 @@
-package assignment1_milan;
+package assignment1;
 
 public class MyObject {
 	
