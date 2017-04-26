@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 
 public class MyParser {
 	
-	// --------------------------------------------------------------------------------------------------
     //###################################################################################################
 	public Document readFile(String file_path){
 	// Method for Loading and Normalizing a XML File
@@ -53,7 +52,6 @@ public class MyParser {
 		return doc;
 	}
 	
-	// -------------------------------------------------------------------------------------------------------------
     //##############################################################################################################
 	public ArrayList<MyObject> parseXML(Document doc_eq, Document doc_ssh, String object, String[] data){
 	// Method for Parsing given CIM XML files (EQ and SSH) for Given Object over Required Data Fields
@@ -78,15 +76,18 @@ public class MyParser {
 			String[] data_attr = new String[data.length];
 			// Parse over all Required Data fields
 			for(int k=0; k<data.length; k++){
-				// If we are looking for the Base Voltage (which is not contained within the element) 
-				// First find the EqContainer, and then from that we can find the corresponding VoltLevel
+				
+				// If we are looking for the Base Voltage (which is not contained within analyzed element)
 				if(data[k].equals("baseVoltage")){
-					String req_volt_id = searchForSimpleData(el,NL2,"cim:Equipment.EquipmentContainer",id);
-					data_attr[k] =  searchForVoltageID(req_volt_id, doc_eq);
+					// First we find the Volt Level ID referenced in the EqContainer tag
+					String volt_lvl_id = extractDataField(el,NL2,"cim:Equipment.EquipmentContainer",id);
+					// Then we find that Volt Level node, and extract its Base Voltage attribute
+					data_attr[k] =  findBaseVoltID(volt_lvl_id, doc_eq);
 				}
+				
 				// If we are looking for other simple data (already contained within element) - we parse normally
 				else{
-					data_attr[k] = searchForSimpleData(el, NL2, data[k], id);
+					data_attr[k] = extractDataField(el, NL2, data[k], id);
 				}
 			}
 			// Push the acquired object into the Array List
@@ -96,21 +97,20 @@ public class MyParser {
 		return ObjectList;
 	}
 	
-	// --------------------------------------------------------------------------------------------------
     //###################################################################################################
-	public String searchForSimpleData(Element el, NodeList NL2, String data, String id){
-	// Method for Extracting Required Simple Data (contained within the EQ node or its SSH counterpart)
+	public String extractDataField(Element el, NodeList NL2, String data, String id){
+	// Method for Extracting Data from Required Field (inside EQ element or its SSH counterpart)
 	//
-	// el 	-> given EQ element
-	// NL2 	-> SSH node list of required object
-	// data	-> required data
-	// id	-> ID of given element
+	// el 	-> analyzed EQ element
+	// NL2 	-> SSH node list (of required objects)
+	// data	-> required data filed
+	// id	-> ID of analyzed element
 		
 		String data_attr;
 		// First search for required tag in the EQ element!!!
 		try{
-				// Look both inside the Tag and Attribute (check fishForData method)
-				data_attr = fishForData(el.getElementsByTagName(data).item(0));
+				// Look both inside the Tag and Attribute (check readTagOrAttr method)
+				data_attr = readTagOrAttr(el.getElementsByTagName(data).item(0));
 				return data_attr;
 		}
 		// If not found there, search through the SSH node
@@ -126,12 +126,12 @@ public class MyParser {
 						break;
 					}
 				}
-				// Throw an exception if the required ID was not found
+				// Throw an exception if the required ID was not found in SSH file
 				if(notFoundFlag){
 					throw new NullPointerException();
 				}
 				// If the ID was found, look for required data inside tag / attribute
-				data_attr = fishForData(el2.getElementsByTagName(data).item(0));
+				data_attr = readTagOrAttr(el2.getElementsByTagName(data).item(0));
 				return data_attr;
 			}
 			// If it still throws an exception we have a problem with required data field!!!
@@ -147,21 +147,18 @@ public class MyParser {
 		return null;
 	}
 	
-	// --------------------------------------------------------------------------------------------------
     //###################################################################################################
-	public String searchForVoltageID(String req_volt_id, Document doc_eq){
+	public String findBaseVoltID(String volt_lvl_id, Document doc_eq){
 	// Method for Extracting Base Voltage ID Data - not contained within the analyzed EQ/SSH element
 	// (first it finds the referenced Voltage Level node, then it reads the Base Voltage attribute)
 	// 
-	// req_volt_id	-> given voltage level ID (taken from equipment container)
+	// volt_lvl_id	-> referenced voltage level ID (from equipment container tag)
 	// doc_eq		-> normalized EQ document
 
 		NodeList NL = doc_eq.getElementsByTagName("cim:VoltageLevel");
 		for(int j=0; j<NL.getLength(); j++){
 			Element el = (Element) NL.item(j);
-			if(el.getAttribute("rdf:ID").equals(req_volt_id.substring(1))){
-				//return el.getElementsByTagName("cim:IdentifiedObject.name").item(0).getTextContent();
-				//return el.getAttribute("rdf:ID");
+			if(el.getAttribute("rdf:ID").equals(volt_lvl_id.substring(1))){
 				el = (Element)el.getElementsByTagName("cim:VoltageLevel.BaseVoltage").item(0);
 				String tmpStr = el.getAttribute("rdf:resource");
 				if(! tmpStr.equals("")){
@@ -171,17 +168,17 @@ public class MyParser {
 				break;
 			}
 		}
-		System.out.println("WARNING: Required Base Voltage ID not found (check Voltage Level "+req_volt_id.substring(1)+")");
+		// If we don't find the required ID throw a Warning and terminate the program
+		System.out.println("WARNING: Required Base Voltage ID not found (check Voltage Level "+volt_lvl_id.substring(1)+")");
 		terminateProgram();
 		return null;
 	}
 	
-	// --------------------------------------------------------------------------------------------------
     //###################################################################################################
-	public String fishForData(Node nd){
+	public String readTagOrAttr(Node nd){
 	// Method for Extracting Required Data Contained within Given Node (in Tags or Attributes)
 
-		// If the tag is empty, check the "rdf:resource" attribute
+		// If the tag text is empty, check the "rdf:resource" attribute
 		if(nd.getTextContent().equals("")){
 			return ((Element)nd).getAttribute("rdf:resource");
 		}		
@@ -192,7 +189,6 @@ public class MyParser {
 		}
 	}
 	
-	// --------------------------------------------------------------------------------------------------
     //###################################################################################################
 	public void terminateProgram(){
 	// Method for terminating the program (in case of exceptions and errors)
