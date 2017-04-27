@@ -31,14 +31,14 @@ public class SQLprinter {
 			System.out.println("Connecting to database...");
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 			// Execute a query to create database
-			System.out.println("Creating database...");
+//			System.out.println("Creating database...");
 			stmt = conn.createStatement();
 			// remove restriction to be able to look for names too, instead of IDs only
 			stmt.executeUpdate("SET SQL_SAFE_UPDATES = 0");
 			// Create database if it doesn't exist
 			String sql = "create database if not exists " + dataBaseName; 
 			stmt.executeUpdate(sql);
-			System.out.println("Database created successfully...");
+//			System.out.println("Database created successfully...");
 			// Connect to the created database 
 //			conn = DriverManager.getConnection(DB_URL + dataBaseName, USER, PASS);
 			
@@ -72,6 +72,7 @@ public class SQLprinter {
 			stmt.executeUpdate(sql);
 			// delete the table if it already exists
 			sql = "drop table if exists " + tableName; 
+//			System.out.println(sql);
 			stmt.executeUpdate(sql);
 			// create the table, all the quantities defined as varchar of 50 length
 			sql = "create table if not exists " + tableName + "(";
@@ -141,7 +142,7 @@ public class SQLprinter {
 					query = query + columnName[i] + "=?, "; 
 				}
 				query = query.substring(0, query.length()-2) + " where " + primaryKeyName + " =?;";
-				System.out.println(query);
+//				System.out.println(query);
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 				for(int i=0; i<attributesValue.length+1; i++){
 					if(i==attributesValue.length){
