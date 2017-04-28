@@ -23,6 +23,15 @@ public class MyObject {
 		}
 		System.out.println("\n");
 	}
+	
+	public String extractDataFiled(String field){
+		for(int n=0; n<req_data.length; n++){
+			if(req_data[n].equals(field)){
+				return ext_data[n];
+			}
+		}
+		return null;
+	}
 
 	public void printObjectType(){
 		String s = "------------------------------------------------";
