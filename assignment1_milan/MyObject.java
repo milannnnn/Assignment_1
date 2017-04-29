@@ -32,7 +32,15 @@ public class MyObject {
 		}
 		return null;
 	}
-
+	
+	public void changeDataField(String field, String newData){
+		for(int n=0; n<req_data.length; n++){
+			if(req_data[n].equals(field)){
+				ext_data[n] = newData;
+			}
+		}
+	}
+	
 	public void printObjectType(){
 		String s = "------------------------------------------------";
 		System.out.println(s+"\n"+object_type+s+"\n");
