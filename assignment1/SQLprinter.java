@@ -1,6 +1,7 @@
 package assignment1;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SQLprinter {
 	// remember to import driver library ----> use bildbath
@@ -13,6 +14,7 @@ public class SQLprinter {
 	Connection conn;
 	Statement stmt;
 	
+	// ############################################################################################################
 	// constructor to initialize the database
 	// Inputs:
 		// USER: username of SQL database
@@ -36,7 +38,9 @@ public class SQLprinter {
 			// remove restriction to be able to look for names too, instead of IDs only
 			stmt.executeUpdate("SET SQL_SAFE_UPDATES = 0");
 			// Create database if it doesn't exist
-			String sql = "create database if not exists " + dataBaseName; 
+			String sql = "drop database " + dataBaseName; 
+			stmt.executeUpdate(sql);
+			sql = "create database if not exists " + dataBaseName; 
 			stmt.executeUpdate(sql);
 //			System.out.println("Database created successfully...");
 			// Connect to the created database 
@@ -53,17 +57,21 @@ public class SQLprinter {
 		}			
 	}
 	
+	// ############################################################################################################
 	// default constructor with default user and password
 	public SQLprinter(){
 		this("root","root");
 	}
 	
+	// ############################################################################################################
 	// method to create a new table
 	// INPUTS:
 		// tableName: name of the table
 		// attributesName: name of the columns as String Array
+		// forKeyPos: position of the foreignKey
+		// forKeyTabName: name of the table the foreign key is referred to
 		// PRIMARY KEY IS THE FIRST ELEMENT
-	public void  insertTable(String tableName, String[] attributesName){
+	public void  insertTable(String tableName, String[] attributesName, ArrayList<Integer> forKeyPos, String[] forKeyTabName){
 		try{
 			// Connect to the created database 
 			conn = DriverManager.getConnection(DB_URL + dataBaseName, USER, PASS);
@@ -71,16 +79,33 @@ public class SQLprinter {
 			String sql = "use " + dataBaseName;
 			stmt.executeUpdate(sql);
 			// delete the table if it already exists
-			sql = "drop table if exists " + tableName; 
+//			sql = "drop table if exists " + tableName; 
 //			System.out.println(sql);
-			stmt.executeUpdate(sql);
+//			stmt.executeUpdate(sql);
 			// create the table, all the quantities defined as varchar of 50 length
 			sql = "create table if not exists " + tableName + "(";
 			for(int i = 0; i<attributesName.length; i++){
-				sql = sql + attributesName[i] + " varchar(50),";  
+				sql = sql + attributesName[i] + " varchar(50), ";  
 			}
+			// Insert primary and foreign key
 			// PRIMARY KEY IS THE FIRST ELEMENT
-			sql = sql + "primary key (" + attributesName[0] + "));";
+			sql = sql + "primary key (" + attributesName[0] + "), ";
+			
+			if(forKeyPos.isEmpty() == false){
+				
+				if(forKeyPos.size()==forKeyTabName.length){
+			
+					for(int i=0; i<forKeyPos.size(); i++){
+						sql = sql + "index (" + attributesName[forKeyPos.get(i)] + "), ";
+						sql = sql + "foreign key (" + attributesName[forKeyPos.get(i)] + ") references " + forKeyTabName[i] + "(ID), ";
+					}
+				}
+				else{
+					System.out.println("forKeyPos.size is not equal to forKeyTabName.length: " + forKeyPos.size() + " != " + forKeyTabName.length);
+				}
+			}
+			// delete the last comma and add semicolon 
+			sql = sql.substring(0, sql.length()-2) + ");";
 //			System.out.println(sql);
 			stmt.executeUpdate(sql);
 			System.out.println("Created table in given database successfully...");
@@ -95,6 +120,7 @@ public class SQLprinter {
 		}	
 	}
 	
+	// ############################################################################################################
 	// insert data in a table using prepared statement
 	// INPUTS:
 	// tableName: name of the table where to insert data
@@ -109,6 +135,12 @@ public class SQLprinter {
 			query = query + "?);";
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			for(int i = 0; i<(data.length); i++){
+				
+				// remove the has before the ID
+				if(data[i].substring(0,1).equals("#")){
+					data[i]=data[i].substring(1, data[i].length());
+				}
+				
 				preparedStmt.setString(i+1, data[i]);
 			}
 			preparedStmt.execute();
@@ -124,6 +156,7 @@ public class SQLprinter {
 		}	
 	}
 	
+	// ############################################################################################################
 	// update the table
 	// INPUTS:
 		// tableName: name of the table where to apply the updates
@@ -165,6 +198,8 @@ public class SQLprinter {
 		}
 	}
 	
+	// ############################################################################################################
+	// close connection with database
 	public void exit(){
 		try {
 			conn.close();
@@ -174,6 +209,7 @@ public class SQLprinter {
 		}
 	}
 	
+	// ############################################################################################################
 	// method to kill the program
 	private void kill(){
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
