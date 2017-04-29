@@ -32,15 +32,15 @@ public class CreateDataBase {
 	// default constructor
 	public CreateDataBase(){
 		
-//		eq_path  = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
-//		ssh_path = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
+		eq_path  = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
+		ssh_path = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 		
 		
 //		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
 //		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 		
-		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_EQ_V2.xml";
-		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_SSH_V2.xml";
+//		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_EQ_V2.xml";
+//		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_SSH_V2.xml";
 		
 		// Object List: list of CIM objects to store in database
 		objectList = new String[]{"cim:BaseVoltage","cim:Substation","cim:VoltageLevel","cim:GeneratingUnit","cim:RegulatingControl","cim:SynchronousMachine","cim:PowerTransformer", "cim:EnergyConsumer","cim:PowerTransformerEnd","cim:Breaker","cim:RatioTapChanger"};
@@ -170,8 +170,8 @@ public class CreateDataBase {
 	
 	private void CreateDB(String eq_path, String ssh_path, String[] objectList, ArrayList<String[]> AttList, String[] TableNames, ArrayList<String[]> ColumNamesList){
 		// create SQLprinter object, which in turn, creates and initializes the DB
-//		SQLprinter newSQLPrinter = new SQLprinter();
-		SQLprinter newSQLPrinter = new SQLprinter("root","Callandor14");
+		SQLprinter newSQLPrinter = new SQLprinter();
+//		SQLprinter newSQLPrinter = new SQLprinter("root","Callandor14");
 		
 		// for each object of objectList, it extracts the name of the table (TableName), the name of the object (ObjectName), the name of the attributes to parse (Attributes),
 		// the name to give to each column (ColumNames)
