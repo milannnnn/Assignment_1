@@ -36,11 +36,11 @@ public class CreateDataBase {
 //		ssh_path = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 		
 		
-//		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
-//		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
+		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
+		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 		
-		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_EQ_V2.xml";
-		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_SSH_V2.xml";
+//		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_EQ_V2.xml";
+//		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_SSH_V2.xml";
 		
 		// Object List: list of CIM objects to store in database
 		objectList = new String[]{"cim:BaseVoltage","cim:Substation","cim:VoltageLevel","cim:GeneratingUnit","cim:RegulatingControl","cim:SynchronousMachine","cim:PowerTransformer", "cim:EnergyConsumer","cim:PowerTransformerEnd","cim:Breaker","cim:RatioTapChanger"};
@@ -131,31 +131,10 @@ public class CreateDataBase {
 	
 	// ############################################################################################################
 	// constructor to customize all the variables declared above
-	public CreateDataBase(String eq_path, String ssh_path, String[] objectList, String[] TableNames,
-	String[] BaseVoltageAttribute, String[] SubstationAttribute, String[] VolatgeLevelAttribute,
-	String[] GeneratingUnitAttribute, String[] SynchronousMachineAttribute, String[] RegulatingControlAttribute,
-	String[] PowerTransformerAttribute,	 String[] PowerTransformerEndAttribute,	 String[] EnergyConsumerAttribute,
-	String[] BreakerAttribute, 	String[] RatioTapChangerAttribute,	 ArrayList<String[]> AttList,
-	ArrayList<String[]> ColumNamesList){
-		
+	public CreateDataBase(String eq_path, String ssh_path){
+		this();
 		this.eq_path = eq_path;
-		this.ssh_path = ssh_path;
-		this.objectList = objectList;
-		this.TableNames = TableNames;
-		this.BaseVoltageAttribute = BaseVoltageAttribute;
-		this.SubstationAttribute = SubstationAttribute;
-		this.VolatgeLevelAttribute = VolatgeLevelAttribute;
-		this.GeneratingUnitAttribute = GeneratingUnitAttribute;
-		this.SynchronousMachineAttribute = SynchronousMachineAttribute;
-		this.RegulatingControlAttribute = RegulatingControlAttribute;
-		this.PowerTransformerAttribute = PowerTransformerAttribute;
-		this.PowerTransformerEndAttribute = PowerTransformerEndAttribute;
-		this.EnergyConsumerAttribute = EnergyConsumerAttribute;
-		this.BreakerAttribute = BreakerAttribute;
-		this.RatioTapChangerAttribute = RatioTapChangerAttribute;
-		this.AttList = AttList;
-		this.ColumNamesList = ColumNamesList;
-		
+		this.ssh_path = ssh_path;		
 	}
 	
 	// ############################################################################################################
