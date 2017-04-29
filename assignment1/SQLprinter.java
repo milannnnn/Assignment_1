@@ -2,6 +2,7 @@ package assignment1;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SQLprinter {
 	// remember to import driver library ----> use bildbath
@@ -54,7 +55,7 @@ public class SQLprinter {
 		catch(Exception e){
 			//Handle errors for Class.forName
 			e.printStackTrace();
-		}			
+		}
 	}
 	
 	// ############################################################################################################
@@ -145,6 +146,11 @@ public class SQLprinter {
 			}
 			preparedStmt.execute();
 			System.out.println("Data inserted...");
+		}
+		catch(SQLIntegrityConstraintViolationException ecc){
+			ecc.printStackTrace();
+			System.out.println("The foreign key you are trying to add doesn't exist as primary key in any other table!");
+			System.out.println("Probably because Synchronous_Machine_NL-G2's GeneratingUnit points towards a ThermalGeneratingUnit rdf:ID= _ca80ee09-3bed-4884-bc28-6dc89d067289, which is not a table");
 		}
 		catch(SQLException se){
 			//Handle errors for JDBC
