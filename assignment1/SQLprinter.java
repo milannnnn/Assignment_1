@@ -2,7 +2,7 @@ package assignment1;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class SQLprinter {
 	// remember to import driver library ----> use bildbath
