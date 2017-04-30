@@ -1,4 +1,4 @@
-package assignment1;
+package assignment1_matteo;
 
 import java.util.ArrayList;
 
@@ -45,7 +45,7 @@ public class CreateDataBase {
 //		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_SSH_V2.xml";
 		
 		USER = "root";
-		PASS = "root";
+		PASS = "Callandor14";
 		
 		// Object List: list of CIM objects to store in database
 		objectList = new String[]{"cim:BaseVoltage","cim:Substation","cim:VoltageLevel","cim:GeneratingUnit","cim:RegulatingControl","cim:SynchronousMachine","cim:PowerTransformer", "cim:EnergyConsumer","cim:PowerTransformerEnd","cim:Breaker","cim:RatioTapChanger"};
@@ -231,22 +231,6 @@ public class CreateDataBase {
 				Document doc_eq  = parser.readFile( eq_path);
 				Document doc_ssh = parser.readFile(ssh_path);
 				ArrayList<MyObject> objects = parser.parseXML(doc_eq, doc_ssh, ObjectName, Attributes);
-				
-				// deal with thermal generating unit
-				// for cim:GeneratingUnit look also for cim:ThermalGeneratingUnit and add them to the same list
-				if(ObjectName.equals("cim:GeneratingUnit")){
-					try{
-						String tempObjectName = "cim:ThermalGeneratingUnit";
-						ArrayList<MyObject> tempObjects = parser.parseXML(doc_eq, doc_ssh, tempObjectName, Attributes);
-						for(int i=0; i<tempObjects.size(); i++){
-							objects.add(tempObjects.get(i));
-						}
-					}
-					// in case of Exception if cim:ThermalGeneratingUnit is not found 
-					catch(Exception e){
-						objects = parser.parseXML(doc_eq, doc_ssh, ObjectName, Attributes);
-					}
-				}
 				
 				for(int i=0; i<objects.size(); i++){
 					// initialize value used later on in a for loop

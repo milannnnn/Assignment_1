@@ -8,7 +8,7 @@ public class GuiMain {
 		
 		Gui matteo = new Gui();
 		matteo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		matteo.setSize(600, 200);
+		matteo.setSize(500, 200);
 		matteo.setVisible(true);
 
 	}
