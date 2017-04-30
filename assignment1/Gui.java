@@ -18,7 +18,13 @@ public class Gui extends JFrame {
 	// TextFields
 	private JTextField tf1;
 	private JPasswordField tf2;
+	private JTextField tf1title;
+	private JTextField tf2title;
+	private JTextField BasePowertitle;
 	private JTextField BasePowerText;
+	private JTextField Customtitle;
+	private JTextField Loadtitle;
+	private JTextField Actiontitle;
 	// buttons
 	private JRadioButton defb;
 	private JRadioButton cusb;
@@ -48,26 +54,19 @@ public class Gui extends JFrame {
 		// use a pre-determined layout, i.e. FlowLayout
 		setLayout(new FlowLayout());
 		
-		// create graphical objects
-		// TEXTFIELDS
-		tf1 = new JTextField("MySQL USERNAME", 40);
-		tf1.setToolTipText("insert MySQL USERNAME and press Enter");
-		// by default they are set not editable
-		tf1.setEditable(customPath);
-		add(tf1);
-		tf2 = new JPasswordField("MySQL PASSWORD", 40);
-		tf2.setEditable(customPath);
-		tf2.setToolTipText("insert MySQL PASSWORD and press Enter");
-		add(tf2);
-		BasePowerText = new JTextField("Base Power [MW]. Default value: 1000 MW", 40);
-		BasePowerText.setEditable(customPath);
-		BasePowerText.setToolTipText("insert Base Power [MW] and press Enter");
-		add(BasePowerText);
 		
-		// create RADIO BUTTONS
+		// create RADIO BUTTONS and TEXT TITLE
+		Customtitle = new JTextField("DEFAULT-CUSTOM OPTIONS", 30);
+		Customtitle.setFont(new Font("Serif",Font.BOLD, 18));
+		Customtitle.setHorizontalAlignment(JTextField.CENTER);
+		Customtitle.setBackground(Color.GRAY);
+		Customtitle.setEditable(false);
+		add(Customtitle);
 		defb = new JRadioButton("default options", true);
+		defb.setFont(new Font("Serif",Font.BOLD, 18));
 		// true is checked, false in unchecked
 		cusb = new JRadioButton("custum options", false);
+		cusb.setFont(new Font("Serif",Font.BOLD, 18));
 		add(defb);
 		add(cusb);
 		// group the radiobuttons together
@@ -75,19 +74,75 @@ public class Gui extends JFrame {
 		group.add(defb);
 		group.add(cusb);
 		
+		// create graphical objects
+		// TEXTFIELDS
+		tf1title = new JTextField("MySQL USERNAME", 30);
+		tf1title.setEditable(false);
+		tf1title.setFont(new Font("Serif",Font.BOLD, 18));
+		tf1title.setHorizontalAlignment(JTextField.CENTER);
+		tf1title.setBackground(Color.GRAY);
+		add(tf1title);
+		tf1 = new JTextField("root", 15);
+		tf1.setFont(new Font("Serif",Font.PLAIN, 18));
+		tf1.setToolTipText("insert MySQL USERNAME and press Enter");
+		// by default they are set not editable
+		tf1.setEditable(customPath);
+		add(tf1);
+		
+		tf2title = new JTextField("MySQL PASSWORD", 30);
+		tf2title.setFont(new Font("Serif",Font.BOLD, 18));
+		tf2title.setHorizontalAlignment(JTextField.CENTER);
+		tf2title.setBackground(Color.GRAY);
+		tf2title.setEditable(false);
+		add(tf2title);
+		tf2 = new JPasswordField("root", 15);
+		tf2.setFont(new Font("Serif",Font.PLAIN, 18));
+		tf2.setEditable(customPath);
+		tf2.setToolTipText("insert MySQL PASSWORD and press Enter");
+		add(tf2);
+		
+		BasePowertitle = new JTextField("BASE POWER [MW]", 30);
+		BasePowertitle.setFont(new Font("Serif",Font.BOLD, 18));
+		BasePowertitle.setHorizontalAlignment(JTextField.CENTER);
+		BasePowertitle.setBackground(Color.GRAY);
+		BasePowertitle.setEditable(false);
+		add(BasePowertitle);
+		BasePowerText = new JTextField("1000", 15);
+		BasePowerText.setFont(new Font("Serif",Font.PLAIN, 18));
+		BasePowerText.setEditable(customPath);
+		BasePowerText.setToolTipText("insert Base Power [MW] and press Enter");
+		add(BasePowerText);
+		
+		
 		// create buttons to load xml files
 		// set by default not enabled 
+		Loadtitle = new JTextField("LOAD EQ-SSH FILES", 30);
+		Loadtitle.setFont(new Font("Serif",Font.BOLD, 18));
+		Loadtitle.setHorizontalAlignment(JTextField.CENTER);
+		Loadtitle.setBackground(Color.GRAY);
+		Loadtitle.setEditable(false);
+		add(Loadtitle);
 		loadEQ = new JButton("Load EQ");
+		loadEQ.setFont(new Font("Serif",Font.BOLD, 18));
 		loadEQ.setEnabled(customPath);
 		add(loadEQ);
 		loadSSH = new JButton("Load SSH");
+		loadSSH.setFont(new Font("Serif",Font.BOLD, 18));
 		loadSSH.setEnabled(customPath);
 		add(loadSSH);
 	
 		// create buttons to execute dataBase creation and Y-matrix building
+		Actiontitle = new JTextField("CREATION SECTION", 30);
+		Actiontitle.setFont(new Font("Serif",Font.BOLD, 18));
+		Actiontitle.setHorizontalAlignment(JTextField.CENTER);
+		Actiontitle.setBackground(Color.GRAY);
+		Actiontitle.setEditable(false);
+		add(Actiontitle);
 		buttDB = new JButton("Create relational DB");
+		buttDB.setFont(new Font("Serif",Font.BOLD, 18));
 		add(buttDB);
 		buttYM = new JButton("Create Admittance matrix");
+		buttYM.setFont(new Font("Serif",Font.BOLD, 18));
 		add(buttYM);
 		
 		// create File Chooser
