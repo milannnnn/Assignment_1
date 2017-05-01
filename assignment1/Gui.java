@@ -19,6 +19,9 @@ import assignment1.CreateDataBase;
 
 public class Gui extends JFrame {
 	
+	// screen dimensions
+	double widthScreen;
+	double heightScreen;
 	// Declare objects that will appear on the interface
 	// TextFields
 	private JTextField tf1;
@@ -60,9 +63,16 @@ public class Gui extends JFrame {
 		// use a pre-determined layout, i.e. FlowLayout
 		setLayout(new FlowLayout());
 		
+		// get screen size
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		widthScreen = screenSize.getWidth();
+		heightScreen = screenSize.getHeight();
+		int myWidth = (int) widthScreen/2;
+		int myHeight = (int) heightScreen/2;
+		int textWidth = myWidth/500*60;
 		
 		// create RADIO BUTTONS and TEXT TITLE
-		Customtitle = new JTextField("DEFAULT-CUSTOM OPTIONS", 30);
+		Customtitle = new JTextField("DEFAULT-CUSTOM OPTIONS", textWidth);
 		Customtitle.setFont(new Font("Serif",Font.BOLD, 18));
 		Customtitle.setHorizontalAlignment(JTextField.CENTER);
 		Customtitle.setBackground(Color.GRAY);
@@ -82,7 +92,7 @@ public class Gui extends JFrame {
 		
 		// create graphical objects
 		// TEXTFIELDS
-		tf1title = new JTextField("MySQL USERNAME", 30);
+		tf1title = new JTextField("MySQL USERNAME", textWidth);
 		tf1title.setEditable(false);
 		tf1title.setFont(new Font("Serif",Font.BOLD, 18));
 		tf1title.setHorizontalAlignment(JTextField.CENTER);
@@ -95,7 +105,7 @@ public class Gui extends JFrame {
 		tf1.setEditable(customPath);
 		add(tf1);
 		
-		tf2title = new JTextField("MySQL PASSWORD", 30);
+		tf2title = new JTextField("MySQL PASSWORD", textWidth);
 		tf2title.setFont(new Font("Serif",Font.BOLD, 18));
 		tf2title.setHorizontalAlignment(JTextField.CENTER);
 		tf2title.setBackground(Color.GRAY);
@@ -107,7 +117,7 @@ public class Gui extends JFrame {
 		tf2.setToolTipText("insert MySQL PASSWORD and press Enter");
 		add(tf2);
 		
-		BasePowertitle = new JTextField("BASE POWER [MW]", 30);
+		BasePowertitle = new JTextField("BASE POWER [MW]", textWidth);
 		BasePowertitle.setFont(new Font("Serif",Font.BOLD, 18));
 		BasePowertitle.setHorizontalAlignment(JTextField.CENTER);
 		BasePowertitle.setBackground(Color.GRAY);
@@ -122,7 +132,7 @@ public class Gui extends JFrame {
 		
 		// create buttons to load xml files
 		// set by default not enabled 
-		Loadtitle = new JTextField("LOAD EQ-SSH FILES", 30);
+		Loadtitle = new JTextField("LOAD EQ-SSH FILES", textWidth);
 		Loadtitle.setFont(new Font("Serif",Font.BOLD, 18));
 		Loadtitle.setHorizontalAlignment(JTextField.CENTER);
 		Loadtitle.setBackground(Color.GRAY);
@@ -138,7 +148,7 @@ public class Gui extends JFrame {
 		add(loadSSH);
 	
 		// create buttons to execute dataBase creation and Y-matrix building
-		Actiontitle = new JTextField("CREATION SECTION", 30);
+		Actiontitle = new JTextField("CREATION SECTION", textWidth);
 		Actiontitle.setFont(new Font("Serif",Font.BOLD, 18));
 		Actiontitle.setHorizontalAlignment(JTextField.CENTER);
 		Actiontitle.setBackground(Color.GRAY);
@@ -162,20 +172,14 @@ public class Gui extends JFrame {
 		fc.setEnabled(customPath);
 		fc.setVisible(customPath);
 		
-		// create console
+		// create console to display outputs
 		errorText = new JTextArea();
 		errorText.setForeground(Color.RED);
-//		errorText.setPreferredSize(new Dimension(480,200));
-//		add(errorText);
-//		JOptionPane.showMessageDialog(null, errorText);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(errorText));
-//		PrintStream con=new PrintStream(new TextAreaOutputStream(...));
 		System.setOut(printStream);
 		System.setErr(printStream);
 		JScrollPane scrollPane1 = new JScrollPane(errorText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane1.setPreferredSize(new Dimension(480,200));
-//		JOptionPane.showMessageDialog(null, scrollPane1, "Admittance Matrix", JOptionPane.PLAIN_MESSAGE);
-		//add(errorText);
+		scrollPane1.setPreferredSize(new Dimension(myWidth,myHeight));
 		add(scrollPane1);
 		
 		// create events handlers
@@ -352,6 +356,7 @@ public class Gui extends JFrame {
 			// try to create database 
 			CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
 			DB.CreateDBDefault();
+			JOptionPane.showMessageDialog(null, "Operation Completed!");
 			
 //			try{
 //				CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
@@ -429,21 +434,21 @@ public class Gui extends JFrame {
 			TableColumn column = null;
 		    for (int i = 0; i < AMString.length; i++) {
 		        column = Table.getColumnModel().getColumn(i);
-		        column.setPreferredWidth(200); 
+		        column.setPreferredWidth((int)(1920*200/widthScreen)); 
 		    }  
 		    // set rows' height
-		    Table.setRowHeight(50);
+		    Table.setRowHeight((int)(1080*50/heightScreen));
 		    // create a scroll pane and add the table to it
 			JScrollPane scrollPane = new JScrollPane(Table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scrollPane.setFont(new Font("Serif",Font.PLAIN, 50));
 			// set window size and limits
-			int width = AMCompl.length * 205;
-			if(width > 1900 ){
-				width = 1900;
+			int width = AMCompl.length * (int)(1920*205/widthScreen);
+			if(width > widthScreen*0.9 ){
+				width =(int) (widthScreen*0.95);
 			}
-			int length = AMCompl.length * 55;
-			if (length>1000){
-				length=900;
+			int length = AMCompl.length * (int)(1080*55/heightScreen);
+			if (length>heightScreen*0.8){
+				length=(int)(heightScreen*0.8);
 			}
 			scrollPane.setPreferredSize( new Dimension(width,length));
 			// add scroll pane to window

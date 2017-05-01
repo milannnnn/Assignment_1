@@ -1,6 +1,4 @@
 package assignment1;
-import java.awt.Color;
-
 import javax.swing.JFrame;
 
 public class GuiMain {
@@ -10,7 +8,9 @@ public class GuiMain {
 		Gui GUI = new Gui();
 		GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// set size and visibility
-		GUI.setSize(500, 700);
+		int Mywidth = (int) GUI.widthScreen/2;
+		int Myheight = (int) (GUI.heightScreen*0.9);
+		GUI.setSize(Mywidth, Myheight);
 		GUI.setResizable(false);
 		GUI.setVisible(true);
 
