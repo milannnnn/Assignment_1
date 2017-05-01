@@ -1,4 +1,4 @@
-package assignment1;
+package assignment1_matteo;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class SQLprinter {
 			// remove restriction to be able to look for names too, instead of IDs only
 			stmt.executeUpdate("SET SQL_SAFE_UPDATES = 0");
 			// Create database if it doesn't exist
-			String sql = "drop database if exists " + dataBaseName; 
+			String sql = "drop database " + dataBaseName; 
 			stmt.executeUpdate(sql);
 			sql = "create database if not exists " + dataBaseName; 
 			stmt.executeUpdate(sql);
@@ -50,8 +50,8 @@ public class SQLprinter {
 		}
 		catch(SQLException se){
 			//Handle errors for JDBC
-			se.printStackTrace();
 			System.out.println("SQL error! Check DB URL, USER and PASS");
+			se.printStackTrace();
 		}
 		catch(Exception e){
 			//Handle errors for Class.forName

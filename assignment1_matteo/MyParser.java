@@ -1,4 +1,4 @@
-package assignment1;
+package assignment1_matteo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -194,7 +194,7 @@ public class MyParser {
 	public void terminateProgram(){
 	// Method for terminating the program (in case of exceptions and errors)
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
-		//System.exit(0);
+		System.exit(0);
 	}
 
 }

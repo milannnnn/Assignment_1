@@ -12,7 +12,7 @@ public class Test {
 //		String eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
 //		String ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 		
-		CreateDataBase DB = new CreateDataBase(eq_path,ssh_path);
+		CreateDataBase DB = new CreateDataBase(eq_path,ssh_path,"root","root");
 //		CreateDataBase DB = new CreateDataBase();
 		DB.CreateDBDefault();
 		
