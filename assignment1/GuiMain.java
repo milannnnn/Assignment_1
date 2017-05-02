@@ -14,5 +14,4 @@ public class GuiMain {
 		GUI.setResizable(false);
 		GUI.setVisible(true);
 	}
-
 }
