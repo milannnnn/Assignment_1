@@ -375,7 +375,7 @@ public class Gui extends JFrame {
 			// image
 			BufferedImage myPicture;
 			try {
-				myPicture = ImageIO.read(new File("C:/Users/Matteo/Pictures/Camera Roll/WIN_20170407_14_36_02_Pro.jpg"));
+				myPicture = ImageIO.read(new File("/.src/EntityRelationshipDiagram.jpg"));
 				JLabel picLabel = new JLabel(new ImageIcon(myPicture));
 				JOptionPane.showMessageDialog(null, picLabel, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
 			} catch (IOException e) {
