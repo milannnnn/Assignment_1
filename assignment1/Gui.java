@@ -377,7 +377,7 @@ public class Gui extends JFrame {
 			try {
 				myPicture = ImageIO.read(new File("./src/EntityRelationshipDiagram.jpg"));
 				JLabel picLabel = new JLabel(new ImageIcon(myPicture));
-				picLabel.setSize((int) (0.5*widthScreen), (int) (0.5*heightScreen));
+				//picLabel.setSize((int) (0.5*widthScreen), (int) (0.5*heightScreen));
 				JOptionPane.showMessageDialog(null, picLabel, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
