@@ -19,6 +19,7 @@ import javax.swing.table.TableColumn;
 import assignment1.AdmittanceMatrix;
 import assignment1.CreateDataBase;
 
+@SuppressWarnings("serial")
 public class Gui extends JFrame {
 	
 	// screen dimensions
