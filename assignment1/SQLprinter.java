@@ -51,7 +51,7 @@ public class SQLprinter {
 		catch(SQLException se){
 			//Handle errors for JDBC
 //			se.printStackTrace();
-			System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, USER and PASS, and try again!!!");
+			System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, Username and Password, and try again!!!");
 			kill();
 		}
 		catch(Exception e){
@@ -117,7 +117,7 @@ public class SQLprinter {
 		catch(SQLException se){
 			//Handle errors for JDBC
 			//se.printStackTrace();
-			System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, USER and PASS, and try again!!!");
+			System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, Username and Password, and try again!!!");
 			kill();
 		}
 		catch(Exception e){
@@ -162,7 +162,7 @@ public class SQLprinter {
 		catch(SQLException se){
 			//Handle errors for JDBC
 			//se.printStackTrace();
-			System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, USER and PASS, and try again!!!");
+			System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, Username and Password, and try again!!!");
 			kill();
 		}
 		catch(Exception e){
@@ -206,7 +206,7 @@ public class SQLprinter {
 			catch(SQLException se){
 				//Handle errors for JDBC
 				//se.printStackTrace();
-				System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, USER and PASS, and try again!!!");
+				System.out.println("\nSQL error! Please check the SQL server, Driver, URL, Connection, Username and Password, and try again!!!");
 				kill();
 			}
 			catch(Exception e){
@@ -225,7 +225,7 @@ public class SQLprinter {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			System.out.println("\nError while closing SQL connection! Please check the SQL server, Driver, URL, Connection, USER and PASS, and try again!!!");
+			System.out.println("\nError while closing SQL connection! Please check the SQL server, Driver, URL, Connection, Username and Password, and try again!!!");
 			kill();
 		}
 	}
