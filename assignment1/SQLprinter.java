@@ -50,8 +50,8 @@ public class SQLprinter {
 		}
 		catch(SQLException se){
 			//Handle errors for JDBC
-			se.printStackTrace();
-			System.out.println("SQL error! Check DB URL, USER and PASS");
+//			se.printStackTrace();
+			System.out.println("SQL error! Please check the SQL server, Driver, URL, Connection, USER and PASS, and try again!!!");
 		}
 		catch(Exception e){
 			//Handle errors for Class.forName

@@ -226,11 +226,8 @@ public class Gui extends JFrame {
 	
 	
 	 
-	/**
-	 * This class extends from OutputStream to redirect output to a JTextArrea
-	 * @author www.codejava.net
-	 *
-	 */
+	// ############################################################################################################
+	// class to plot the console output in the GUI
 	public class CustomOutputStream extends OutputStream {
 	    private JTextArea textArea;
 	     
@@ -246,7 +243,6 @@ public class Gui extends JFrame {
 	        textArea.setCaretPosition(textArea.getDocument().getLength());
 	    }
 	}
-	
 	
 	// ############################################################################################################
 	// handle default-custom options with radio buttons
@@ -294,7 +290,7 @@ public class Gui extends JFrame {
 				USER = event.getActionCommand();
 				JOptionPane.showMessageDialog(null, "USERNAME successfully inserted");
 				// set USER not editable
-				tf1.setEditable(!customPath);
+//				tf1.setEditable(!customPath);
 				// set PASSWORD editable
 				tf2.setEditable(customPath);
 			}
@@ -306,7 +302,7 @@ public class Gui extends JFrame {
 				// enable EQ file selection button
 				loadEQ.setEnabled(customPath);
 				// set PASSWORD uneditable
-				tf2.setEditable(!customPath);
+//				tf2.setEditable(!customPath);
 				// set file chooser visible
 				fc.setVisible(customPath);
 				fc.setEnabled(customPath);
@@ -373,24 +369,6 @@ public class Gui extends JFrame {
 			CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
 			DB.CreateDBDefault();
 			JOptionPane.showMessageDialog(null, "Operation Completed!");
-			
-//			try{
-//				CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
-//				DB.CreateDBDefault();
-//				JOptionPane.showMessageDialog(null, "Database Created Successfully!");
-//			}
-//			
-//			catch(Exception SQLe){
-//				// if exception is thrown and custom option is active, ask to check user and psw
-//				if(customPath){
-//					JOptionPane.showMessageDialog(null, "Check USER and PASSWORD!!");
-//					tf1.setEditable(customPath);
-//				}
-//				// if exception is thrown and default option is active, ask to pass to custom option
-//				else{
-//					JOptionPane.showMessageDialog(null, "Default user and passord don't work! \nSelect custom options and insert them!");
-//				}
-//			}
 		}
 	}
 	// ############################################################################################################
