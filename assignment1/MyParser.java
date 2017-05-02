@@ -194,7 +194,7 @@ public class MyParser {
     //###################################################################################################
 	public void terminateProgram(){
 	// Method for terminating the program (in case of exceptions and errors)
-		MyException e = new MyException("");
+		//MyException e = new MyException("");
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)\n");
 		//throw e;
 		//System.exit(0);
