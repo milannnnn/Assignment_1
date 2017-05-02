@@ -5,11 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumn;
@@ -369,6 +371,16 @@ public class Gui extends JFrame {
 			CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
 			DB.CreateDBDefault();
 			JOptionPane.showMessageDialog(null, "Operation Completed!");
+			// image
+			BufferedImage myPicture;
+			try {
+				myPicture = ImageIO.read(new File("C:/Users/Matteo/Pictures/Camera Roll/WIN_20170407_14_36_02_Pro.jpg"));
+				JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+				JOptionPane.showMessageDialog(null, picLabel, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	// ############################################################################################################
