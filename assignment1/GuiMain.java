@@ -13,7 +13,6 @@ public class GuiMain {
 		GUI.setSize(Mywidth, Myheight);
 		GUI.setResizable(false);
 		GUI.setVisible(true);
-
 	}
 
 }

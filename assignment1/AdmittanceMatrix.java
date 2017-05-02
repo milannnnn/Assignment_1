@@ -368,8 +368,9 @@ public class AdmittanceMatrix {
 	
 	// #####################################################################
 	// Method for terminating the program (in case of exceptions and errors)
+	@SuppressWarnings("deprecation")
 	private void terminateProgram(){
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
-		System.exit(0);
+		Thread.currentThread().stop();
 	}
 }

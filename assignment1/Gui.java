@@ -368,99 +368,107 @@ public class Gui extends JFrame {
 	private class ButtonDBHandler implements ActionListener{
 		
 		public void actionPerformed(ActionEvent event){
-			// try to create database 
-			CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
-			DB.CreateDBDefault();
-			JOptionPane.showMessageDialog(null, "Operation Completed!");
-			// image
-			BufferedImage myPicture;
-			try {
-				myPicture = ImageIO.read(new File("./src/EntityRelationshipDiagram.jpg"));
-				JLabel picLabel = new JLabel(new ImageIcon(myPicture));
-				//picLabel.setSize((int) (0.5*widthScreen), (int) (0.5*heightScreen));
-				JOptionPane.showMessageDialog(null, picLabel, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// Run the main code inside a New Thread (if error occurs - only thread gets killed, and GUI stays operational)
+			new Thread(){
+				public void run(){
+					// try to create database
+					CreateDataBase DB = new CreateDataBase(EQpath, SSHpath, USER, PASS);
+					DB.CreateDBDefault();
+					JOptionPane.showMessageDialog(null, "Operation Completed!");
+					// image
+					BufferedImage myPicture;
+					try {
+						myPicture = ImageIO.read(new File("./src/EntityRelationshipDiagram.jpg"));
+						JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+						JOptionPane.showMessageDialog(null, picLabel, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}.start();
 		}
 	}
 	// ############################################################################################################
 	// handle Y-Matrix creation button
 	private class ButtonYMHandler implements ActionListener{					
 		public void actionPerformed(ActionEvent event){	
-			// create admittance matrix
-			AdmittanceMatrix AM = new AdmittanceMatrix();
-			assignment1.Complex[][] AMCompl = AM.calculateAdmMatrix(EQpath, SSHpath, basePower);
-			// create empty string matrix
-			String[][] AMString = new String[AMCompl.length][AMCompl.length];
-			// convert Complex matrix to String matrix
-			for(int k=0; k<AMCompl.length; k++){
-				for(int j=0; j<AMCompl.length; j++){
-					// extract Complex number
-					assignment1.Complex val = AMCompl[k][j];
-					// save real and imaginary parts
-					double real = val.re();
-					double im = val.im();
-					String sign = "";
-					String space = "";
-					// if real part is positive add plus
-					if(im >= 0){
-						sign = "+";
+			// Run the main code inside a New Thread (if error occurs - only thread gets killed, and GUI stays operational)
+			new Thread(){
+				public void run(){
+					// try to create admittance matrix
+					AdmittanceMatrix AM = new AdmittanceMatrix();
+					assignment1.Complex[][] AMCompl = AM.calculateAdmMatrix(EQpath, SSHpath, basePower);
+					// create empty string matrix
+					String[][] AMString = new String[AMCompl.length][AMCompl.length];
+					// convert Complex matrix to String matrix
+					for(int k=0; k<AMCompl.length; k++){
+						for(int j=0; j<AMCompl.length; j++){
+							// extract Complex number
+							assignment1.Complex val = AMCompl[k][j];
+							// save real and imaginary parts
+							double real = val.re();
+							double im = val.im();
+							String sign = "";
+							String space = "";
+							// if real part is positive add plus
+							if(im >= 0){
+								sign = "+";
+							}
+							// if real part is negative add minus
+							else{
+								im = -im;
+								sign = "-";
+							}
+							// add minus to real negative part
+							if(real < 0){
+								real = -real;
+								space = "-";
+							}
+							// add empty space before real positive part
+							else{
+								space =" ";
+							}
+							// set format of each element
+							// take 4 decimals points
+							AMString[k][j] = String.format( space + "%.4f " + sign + " %.4f" + "i", real , im);
+						}
 					}
-					// if real part is negative add minus
-					else{
-						im = -im;
-						sign = "-";
+					// create Array of columns names
+					String[] names = new String[AMString.length];
+					for( int i=0; i<AMString.length; i++){
+						names[i]= Integer.toString(i+1);
 					}
-					// add minus to real negative part
-					if(real < 0){
-						real = -real;
-						space = "-";
+					// create table with given matrix and column names
+					JTable Table = new JTable(AMString, names);
+					// disable autoresize
+					Table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					// set Font
+					Table.setFont(new Font("Serif",Font.PLAIN, 22));
+					// set column width
+					TableColumn column = null;
+				    for (int i = 0; i < AMString.length; i++) {
+				        column = Table.getColumnModel().getColumn(i);
+				        column.setPreferredWidth((int)(1920*200/widthScreen)); 
+				    }  
+				    // set rows' height
+				    Table.setRowHeight((int)(1080*50/heightScreen));
+				    // create a scroll pane and add the table to it
+					JScrollPane scrollPane = new JScrollPane(Table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+					scrollPane.setFont(new Font("Serif",Font.PLAIN, 50));
+					// set window size and limits
+					int width = AMCompl.length * (int)(1920*205/widthScreen);
+					if(width > widthScreen*0.9 ){
+						width =(int) (widthScreen*0.95);
 					}
-					// add empty space before real positive part
-					else{
-						space =" ";
+					int length = AMCompl.length * (int)(1080*55/heightScreen);
+					if (length>heightScreen*0.8){
+						length=(int)(heightScreen*0.8);
 					}
-					// set format of each element
-					// take 4 decimals points
-					AMString[k][j] = String.format( space + "%.4f " + sign + " %.4f" + "i", real , im);
+					scrollPane.setPreferredSize( new Dimension(width,length));
+					// add scroll pane to window
+					JOptionPane.showMessageDialog(null, scrollPane, "Admittance Matrix", JOptionPane.PLAIN_MESSAGE);
 				}
-			}
-			// create Array of columns names
-			String[] names = new String[AMString.length];
-			for( int i=0; i<AMString.length; i++){
-				names[i]= Integer.toString(i+1);
-			}
-			// create table with given matrix and column names
-			JTable Table = new JTable(AMString, names);
-			// disable autoresize
-			Table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			// set Font
-			Table.setFont(new Font("Serif",Font.PLAIN, 22));
-			// set column width
-			TableColumn column = null;
-		    for (int i = 0; i < AMString.length; i++) {
-		        column = Table.getColumnModel().getColumn(i);
-		        column.setPreferredWidth((int)(1920*200/widthScreen)); 
-		    }  
-		    // set rows' height
-		    Table.setRowHeight((int)(1080*50/heightScreen));
-		    // create a scroll pane and add the table to it
-			JScrollPane scrollPane = new JScrollPane(Table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scrollPane.setFont(new Font("Serif",Font.PLAIN, 50));
-			// set window size and limits
-			int width = AMCompl.length * (int)(1920*205/widthScreen);
-			if(width > widthScreen*0.9 ){
-				width =(int) (widthScreen*0.95);
-			}
-			int length = AMCompl.length * (int)(1080*55/heightScreen);
-			if (length>heightScreen*0.8){
-				length=(int)(heightScreen*0.8);
-			}
-			scrollPane.setPreferredSize( new Dimension(width,length));
-			// add scroll pane to window
-			JOptionPane.showMessageDialog(null, scrollPane, "Admittance Matrix", JOptionPane.PLAIN_MESSAGE);
-		}
+			}.start();		}
 	}
 }
