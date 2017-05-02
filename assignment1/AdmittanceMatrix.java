@@ -108,10 +108,10 @@ public class AdmittanceMatrix {
 			}
 		}
 		
-		for(int k=0; k<virtualBuses.size(); k++){
-			virtualBuses.get(k).printOut();
-		}
-		System.out.println("\n\nTotal Size: " + virtualBuses.size()+"\n\n");
+//		for(int k=0; k<virtualBuses.size(); k++){
+//			virtualBuses.get(k).printOut();
+//		}
+//		System.out.println("\n\nTotal Size: " + virtualBuses.size()+"\n\n");
 		
 		//###### Initialize the YBusMatrix to complex zeros!!!
 		Complex[][] YBusMatrix = new Complex[virtualBuses.size()][virtualBuses.size()];
@@ -179,21 +179,13 @@ public class AdmittanceMatrix {
 			}
 		}
 		
-		
-		for(int k=0; k<virtualBuses.size(); k++){
-			for(int j=0; j<virtualBuses.size(); j++){
-				System.out.print(YBusMatrix[k][j] + "\t");
-			}
-			System.out.print("\n");
-		}
-		
 		return YBusMatrix;
 	}
 	
 	
 	// #######################################################################################################################
 	// Checks if the given terminal is connected to a busbar / breaker, and if so returns the list of all connected terminals:
-	public boolean checkForElecticalConnection(VirtualBus firstBus, VirtualBus secondBus, ArrayList<MyObject> busbarSections, ArrayList<MyObject> breakers){
+	private boolean checkForElecticalConnection(VirtualBus firstBus, VirtualBus secondBus, ArrayList<MyObject> busbarSections, ArrayList<MyObject> breakers){
 		
 		for(int j=0; j<firstBus.includedTerminals.size();j++){
 			String condEqId = firstBus.includedTerminals.get(j).extractDataFiled("cim:Terminal.ConductingEquipment").substring(1);
@@ -231,7 +223,7 @@ public class AdmittanceMatrix {
 	
 	// ###########################################################
 	// Returns all Terminals connected to given Connectivity Node:
-	public ArrayList<MyObject> getConnectedTerminals(MyObject connNode, ArrayList<MyObject> terminals){
+	private ArrayList<MyObject> getConnectedTerminals(MyObject connNode, ArrayList<MyObject> terminals){
 		
 		ArrayList<MyObject> connectedTerminals = new ArrayList<MyObject>();
 		String nodeId = connNode.object_id;
@@ -247,7 +239,7 @@ public class AdmittanceMatrix {
 
 	// ##################################################
 	// Finds the Object by its ID, from a List of Objects
-	public MyObject findObjectById(String objectId, ArrayList<MyObject> listOfObjects){
+	private MyObject findObjectById(String objectId, ArrayList<MyObject> listOfObjects){
 		
 		for(int q=0;q<listOfObjects.size();q++){
 			if(listOfObjects.get(q).object_id.equals(objectId)){
@@ -259,7 +251,7 @@ public class AdmittanceMatrix {
 
 	// ######################################################################################################
 	// Checks if Terminal is connected to given Objects and if so returns Object ID (otherwise it returns "")
-	public String isTerminalInsideObjects(MyObject terminal, ArrayList<MyObject> listOfObjects){
+	private String isTerminalInsideObjects(MyObject terminal, ArrayList<MyObject> listOfObjects){
 		
 		String condEqId = terminal.extractDataFiled("cim:Terminal.ConductingEquipment").substring(1);
 		for(int k=0; k<listOfObjects.size(); k++){
@@ -272,7 +264,7 @@ public class AdmittanceMatrix {
 
 	// ###########################################################
 	// Checks if certain Object is connected to given Virtual Bus:
-	public boolean isLineConnToBus(String objectID, VirtualBus vBus){
+	private boolean isLineConnToBus(String objectID, VirtualBus vBus){
 		
 		for(int k=0; k<vBus.includedTerminals.size();k++){
 			if(vBus.includedTerminals.get(k).extractDataFiled("cim:Terminal.ConductingEquipment").substring(1).equals(objectID)){
@@ -285,7 +277,7 @@ public class AdmittanceMatrix {
 
 	// ###########################################################
 	// Checks if certain Object is connected to given Virtual Bus:
-	public String isTrafoConnToBus(String trafoId, VirtualBus vBus, ArrayList<MyObject> powerTransformerEnds){
+	private String isTrafoConnToBus(String trafoId, VirtualBus vBus, ArrayList<MyObject> powerTransformerEnds){
 		
 		for(int k=0; k<vBus.includedTerminals.size(); k++){
 			String windingId = isTerminalInsideObjects(vBus.includedTerminals.get(k), powerTransformerEnds);
@@ -301,7 +293,7 @@ public class AdmittanceMatrix {
 
 	// ###############################################################################
 	// Calculates the COMPLEX Line and Shunt Admittances of an AC Line Segment !!!!!!!
-	public Complex[] calcLineAdmittances(MyObject line, ArrayList<MyObject> baseVoltages, double basePower){
+	private Complex[] calcLineAdmittances(MyObject line, ArrayList<MyObject> baseVoltages, double basePower){
 		double r=0;	double x=0;
 		double b=0;	double g=0;
 		double baseVolt=0;
@@ -327,7 +319,7 @@ public class AdmittanceMatrix {
 	
 	// ########################################################################################
 	// Calculates the COMPLEX Line and Shunt Admittances of an Transformer Winding Pair !!!!!!!
-	public Complex[] calcTrafoAdmittances(MyObject winding1, MyObject winding2, ArrayList<MyObject> baseVoltages, double basePower){
+	private Complex[] calcTrafoAdmittances(MyObject winding1, MyObject winding2, ArrayList<MyObject> baseVoltages, double basePower){
 		double r1, x1, b1, g1, baseVolt1, baseImp1;
 		double r2, x2, b2, g2, baseVolt2, baseImp2;
 		double r, x, b, g;
@@ -369,7 +361,7 @@ public class AdmittanceMatrix {
 
 	// #########################################################################
 	// Finds the Value of Base Voltage based on Given Base Voltage Reference ID:
-	public double getBaseVoltValue(String baseVoltRef, ArrayList<MyObject> baseVoltages){
+	private double getBaseVoltValue(String baseVoltRef, ArrayList<MyObject> baseVoltages){
 		for(int k=0; k<baseVoltages.size(); k++){
 			if(baseVoltages.get(k).object_id.equals(baseVoltRef.substring(1))){
 				return Double.parseDouble(baseVoltages.get(k).extractDataFiled("cim:BaseVoltage.nominalVoltage"));
@@ -382,7 +374,7 @@ public class AdmittanceMatrix {
 	
 	// #####################################################################
 	// Method for terminating the program (in case of exceptions and errors)
-	public void terminateProgram(){
+	private void terminateProgram(){
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
 		System.exit(0);
 	}

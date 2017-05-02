@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+//import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -137,7 +138,7 @@ public class MyParser {
 			// If it still throws an exception we have a problem with required data field!!!
 			catch(java.lang.NullPointerException e){
 				System.out.println("WARNING: Required data attribute not found (probably missing or misspelled)");
-				System.out.println("Please check for data field \""+data+"\" inside \""+id+"\" object!!!\n");
+				System.out.println("Please check for data field \""+data+"\" inside \""+id+"\" object!!!");
 				
 				// Kill the program - Force the Human to correct its mistake (so it feels important)!!! 
 				// (otherwise we could have also continued the PROGRAM by writing a NULL element)!!!
@@ -193,7 +194,8 @@ public class MyParser {
     //###################################################################################################
 	public void terminateProgram(){
 	// Method for terminating the program (in case of exceptions and errors)
-		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
+		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)\n");
+		//try{TimeUnit.SECONDS.sleep(3);}catch(InterruptedException e){System.out.println(e);} 
 		//System.exit(0);
 	}
 

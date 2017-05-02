@@ -67,9 +67,25 @@ public class Gui extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		widthScreen = screenSize.getWidth();
 		heightScreen = screenSize.getHeight();
-		int myWidth = (int) widthScreen/2;
-		int myHeight = (int) heightScreen/2;
-		int textWidth = myWidth/500*60;
+		int consoleHeight, consoleWidth;
+		if(widthScreen>=1920){
+			widthScreen  = 1920.0;
+			heightScreen = 1080.0;
+			consoleHeight = (int) (0.475*heightScreen);
+			consoleWidth  = (int) (0.495* widthScreen);
+		}
+		else if(widthScreen==1366){
+			consoleHeight = (int) (0.320*heightScreen);
+			consoleWidth  = (int) (0.495* widthScreen);
+		}
+		else{
+			consoleHeight = (int) (0.250*heightScreen);
+			consoleWidth  = (int) (0.495* widthScreen);
+		}
+		
+//		int myWidth = (int) widthScreen/2;
+//		int myHeight = (int) heightScreen/2;
+		int textWidth = (int) (widthScreen/2/500*60);
 		
 		// create RADIO BUTTONS and TEXT TITLE
 		Customtitle = new JTextField("DEFAULT-CUSTOM OPTIONS", textWidth);
@@ -179,7 +195,7 @@ public class Gui extends JFrame {
 		System.setOut(printStream);
 		System.setErr(printStream);
 		JScrollPane scrollPane1 = new JScrollPane(errorText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane1.setPreferredSize(new Dimension(myWidth,myHeight));
+		scrollPane1.setPreferredSize(new Dimension(consoleWidth,consoleHeight));
 		add(scrollPane1);
 		
 		// create events handlers
