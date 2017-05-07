@@ -85,14 +85,21 @@ public class CreateDataBase {
 		// Column Names List: list of names we want to give to each column
 		String[] BaseVoltageColName = new String[] {"ID","nominalVoltage"};
 		String[] SubstationColName = new String[]{"ID","IdentifiedObject_name","Substation_Region"};
-		String[] VolatgeLevelColName = new String[]{"ID","IdentifiedObject_name","VoltageLevel_Substation","VoltageLevel_BaseVoltage"};
-		String[] GeneratingUnitColName = new String[]{"ID","IdentifiedObject_name","GeneratingUnit_maxOperatingP","GeneratingUnit_minOperatingP","Equipment_EquipmentContainer"};
+//		String[] VolatgeLevelColName = new String[]{"ID","IdentifiedObject_name","VoltageLevel_Substation","VoltageLevel_BaseVoltage"};
+		String[] VolatgeLevelColName = new String[]{"ID","IdentifiedObject_name","Substation_ID","BaseVoltage_ID"};
+//		String[] GeneratingUnitColName = new String[]{"ID","IdentifiedObject_name","GeneratingUnit_maxOperatingP","GeneratingUnit_minOperatingP","Equipment_EquipmentContainer"};
+		String[] GeneratingUnitColName = new String[]{"ID","IdentifiedObject_name","GeneratingUnit_maxOperatingP","GeneratingUnit_minOperatingP","Substation_ID"};
 		String[] RegulatingControlColName = new String[]{"ID","IdentifiedObject_name","RegulatingControl_targetValue"};
-		String[] SynchronousMachineColName = new String[]{"ID","IdentifiedObject_name","RotatingMachine_ratedS","RotatingMachine_p","RotatingMachine_q","RotatingMachine_GeneratingUnit","RegulatingCondEq_RegulatingControl", "Equipment_EquipmentContainer","baseVoltage"};
-		String[] PowerTransformerColName = new String[]{"ID","IdentifiedObject_name","Equipment_EquipmentContainer"};
-		String[] EnergyConsumerColName = new String[]{"ID","IdentifiedObject_name","EnergyConsumer_p","EnergyConsumer_q","Equipment_EquipmentContainer","baseVoltage"};
-		String[] PowerTransformerEndColName = new String[]{"ID","IdentifiedObject_name","PowerTransformerEnd_r","PowerTransformerEnd_x","PowerTransformerEnd_PowerTransformer","TransformerEnd_BaseVoltage"};
-		String[] BreakerColName = new String[]{"ID","IdentifiedObject_name","Switch_open","Equipment_EquipmentContainer","baseVoltage"};
+//		String[] SynchronousMachineColName = new String[]{"ID","IdentifiedObject_name","RotatingMachine_ratedS","RotatingMachine_p","RotatingMachine_q","RotatingMachine_GeneratingUnit","RegulatingCondEq_RegulatingControl", "Equipment_EquipmentContainer","baseVoltage"};
+		String[] SynchronousMachineColName = new String[]{"ID","IdentifiedObject_name","RotatingMachine_ratedS","RotatingMachine_p","RotatingMachine_q","GeneratingUnit_ID","RegulatingControl_ID", "voltageLevel_ID","baseVoltage_ID"};
+//		String[] PowerTransformerColName = new String[]{"ID","IdentifiedObject_name","Equipment_EquipmentContainer"};
+		String[] PowerTransformerColName = new String[]{"ID","IdentifiedObject_name","Substation_ID"};
+//		String[] EnergyConsumerColName = new String[]{"ID","IdentifiedObject_name","EnergyConsumer_p","EnergyConsumer_q","Equipment_EquipmentContainer","baseVoltage"};
+		String[] EnergyConsumerColName = new String[]{"ID","IdentifiedObject_name","EnergyConsumer_p","EnergyConsumer_q","voltageLevel_ID","baseVoltage_ID"};
+//		String[] PowerTransformerEndColName = new String[]{"ID","IdentifiedObject_name","PowerTransformerEnd_r","PowerTransformerEnd_x","PowerTransformerEnd_PowerTransformer","TransformerEnd_BaseVoltage"};
+		String[] PowerTransformerEndColName = new String[]{"ID","IdentifiedObject_name","PowerTransformerEnd_r","PowerTransformerEnd_x","PowerTransformer_ID","BaseVoltage_ID"};
+//		String[] BreakerColName = new String[]{"ID","IdentifiedObject_name","Switch_open","Equipment_EquipmentContainer","baseVoltage"};
+		String[] BreakerColName = new String[]{"ID","IdentifiedObject_name","Switch_open","voltageLevel_ID","baseVoltage_ID"};
 		String[] RatioTapChangerColName = new String[]{"ID","IdentifiedObject_name","TapChanger_step"};
 		// Array list which contains all arrays defined above
 		ColumNamesList = new ArrayList<String[]>();
@@ -175,7 +182,6 @@ public class CreateDataBase {
 		}
 		// close connection with database
 		newSQLPrinter.exit();
-		System.out.println("DATABASE CREATED SUCCESSFULLY =)");
 	}
 	// ############################################################################################################
 	// it does the same as CreateDB, but using default data
@@ -258,7 +264,7 @@ public class CreateDataBase {
 					// initialize an ArrayList of Integers containing the position of the column of the table where a foreign key has to be added
 					ArrayList<Integer> forKeyPos = new ArrayList<Integer>();
 					// initialize an ArrayList of Strings containing the name of the tables a certain foreign key is referred to
-						// it represents the table where the foreign is a primary key
+					// it represents the table where the foreign is a primary key
 					ArrayList<String> forKeyTabName = new ArrayList<String>();
 					// initialize an Array of strings the ArrayList (forKeyTabName) will be converted to
 					String[] forKeyTabNameArray = new String[0];

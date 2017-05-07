@@ -380,7 +380,9 @@ public class Gui extends JFrame {
 					try {
 						myPicture = ImageIO.read(new File("./src/EntityRelationshipDiagram.jpg"));
 						JLabel picLabel = new JLabel(new ImageIcon(myPicture));
-						JOptionPane.showMessageDialog(null, picLabel, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
+						JScrollPane scrollPane2 = new JScrollPane(picLabel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+						scrollPane2.setPreferredSize(new Dimension((int) (0.8*widthScreen), (int) (0.8*heightScreen)));
+						JOptionPane.showMessageDialog(null, scrollPane2, "Entity relationship diagram", JOptionPane.PLAIN_MESSAGE);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
