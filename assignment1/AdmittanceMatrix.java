@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 
-// TODO Currently we are checking for Electrical Connection between Connectivity Nodes over all Closed Breakers and All Busbar Sections
-// TODO (checking the electrical connectivity over busbar sections could have been left out, since (is our files) each busbar section is  
-// TODO  connected just to one terminal, but in order to keep our program as general as possible, we decided to leave inside - just in case)
+// TODO Currently we are Merging All Connectivity Nodes connected with a Closed Breaker or a Busbar Section
+// TODO [ while in our CIM examples the checking over busbar sections is not needed - since each section has only one terminal, ]
+// TODO [ in order to keep our code as general as possible, we have decided to keep the busbar checking inside -  just in case! ]
 
 public class AdmittanceMatrix {
 	
@@ -102,10 +102,13 @@ public class AdmittanceMatrix {
 			}
 		}
 		
-//		for(int k=0; k<virtualBuses.size(); k++){
-//			virtualBuses.get(k).printOut();
-//		}
-//		System.out.println("\n\nTotal Size: " + virtualBuses.size()+"\n\n");
+		//##### Printing Out Virtual Buses (Nodes and Terminals)
+		for(int k=0; k<virtualBuses.size(); k++){
+			System.out.println("VIRTUAL BUS "+(k+1)+":\n");
+			virtualBuses.get(k).printOut();
+		}
+		System.out.println("\n\nTotal Size: " + virtualBuses.size()+"\n\n");
+		
 		
 		//###### Initialize the YBusMatrix to complex zeros!!!
 		Complex[][] YBusMatrix = new Complex[virtualBuses.size()][virtualBuses.size()];
@@ -165,8 +168,7 @@ public class AdmittanceMatrix {
 							
 							// Add the Shunt Admittances to the Y Bus
 							YBusMatrix[k][k] = YBusMatrix[k][k].plus(tmpAdmittance[1]);
-							YBusMatrix[j][j] = YBusMatrix[j][j].plus(tmpAdmittance[1]);
-							//System.out.println(tmpAdmittance[1]);
+							YBusMatrix[j][j] = YBusMatrix[j][j].plus(tmpAdmittance[2]);
 						}
 					}
 				}
@@ -178,14 +180,14 @@ public class AdmittanceMatrix {
 	
 	
 	// #######################################################################################################################
-	// Checks if the given terminal is connected to a busbar / breaker, and if so returns the list of all connected terminals:
+	// Checks if given Buses are connected over a busbar /Closed Breaker (if so returns TRUE):
 	private boolean checkForElecticalConnection(VirtualBus firstBus, VirtualBus secondBus, ArrayList<MyObject> busbarSections, ArrayList<MyObject> breakers){
 		
 		for(int j=0; j<firstBus.includedTerminals.size();j++){
 			String condEqId = firstBus.includedTerminals.get(j).extractDataFiled("cim:Terminal.ConductingEquipment").substring(1);
 			boolean isBusbarOrBreaker = false;
 			
-			// Check if the given terminal is connected to busbar (probably not necessary, but just in case)
+			// Check if the given terminal a busbar (NOT NEEDED - each section has only 1 terminal, but still it makes the code more robust)
 			for(int k=0; k<busbarSections.size(); k++){
 				if(busbarSections.get(k).object_id.equals(condEqId)){
 					isBusbarOrBreaker = true;
@@ -193,7 +195,7 @@ public class AdmittanceMatrix {
 				}
 			}
 			
-			// Check if the given terminal is connected to breaker
+			// Check if the given terminal a closed breaker
 			for(int k=0; k<breakers.size(); k++){
 				if(breakers.get(k).object_id.equals(condEqId) || isBusbarOrBreaker){
 					isBusbarOrBreaker = true;
@@ -299,6 +301,7 @@ public class AdmittanceMatrix {
 		baseVolt = getBaseVoltValue(line.extractDataFiled("cim:ConductingEquipment.BaseVoltage"),baseVoltages);
 		double baseImp = baseVolt*baseVolt/basePower;
 		
+		// Extract Line Parameters and Normalize to p.u.
 		r = Double.parseDouble(line.extractDataFiled("cim:ACLineSegment.r"))/baseImp;
 		x = Double.parseDouble(line.extractDataFiled("cim:ACLineSegment.x"))/baseImp;
 		b = Double.parseDouble(line.extractDataFiled("cim:ACLineSegment.bch"))*baseImp;
@@ -316,7 +319,6 @@ public class AdmittanceMatrix {
 	private Complex[] calcTrafoAdmittances(MyObject winding1, MyObject winding2, ArrayList<MyObject> baseVoltages, double basePower){
 		double r1, x1, b1, g1, baseVolt1, baseImp1;
 		double r2, x2, b2, g2, baseVolt2, baseImp2;
-		double r, x, b, g;
 		
 		if(!winding1.object_type.equals("cim:PowerTransformerEnd") || !winding2.object_type.equals("cim:PowerTransformerEnd")){
 			System.out.println("Analyzed Objects not Transformer Windings - Cannot Calculate Admittance!!!");
@@ -330,27 +332,46 @@ public class AdmittanceMatrix {
 		baseImp1 = baseVolt1*baseVolt1/basePower;
 		baseImp2 = baseVolt2*baseVolt2/basePower;
 		
+		// Extract the Parameters of the 1st Winding and Normalize to p.u.
 		r1 = Double.parseDouble(winding1.extractDataFiled("cim:PowerTransformerEnd.r"))/baseImp1;
 		x1 = Double.parseDouble(winding1.extractDataFiled("cim:PowerTransformerEnd.x"))/baseImp1;
 		b1 = Double.parseDouble(winding1.extractDataFiled("cim:PowerTransformerEnd.b"))*baseImp1;
 		g1 = Double.parseDouble(winding1.extractDataFiled("cim:PowerTransformerEnd.g"))*baseImp1;
 		
+		// Extract the Parameters of the 2nd Winding and Normalize to p.u.
 		r2 = Double.parseDouble(winding2.extractDataFiled("cim:PowerTransformerEnd.r"))/baseImp2;
 		x2 = Double.parseDouble(winding2.extractDataFiled("cim:PowerTransformerEnd.x"))/baseImp2;
 		b2 = Double.parseDouble(winding2.extractDataFiled("cim:PowerTransformerEnd.b"))*baseImp2;
 		g2 = Double.parseDouble(winding2.extractDataFiled("cim:PowerTransformerEnd.g"))*baseImp2;
 		
-		r = r1+r2;
-		x = x1+x2;
-		b = b1+b2;
-		g = g1+g2;
+		// Since the Windings form a Y connection ( (r1+jx1)->T1; (g+jb)->GND; (r1+jx1)->T2)
+		// => we need to do a Y to Delta Transformation
+		Complex y_1, y_2, y_3, sum, y_12, y_13, y_23;
+		
+		// We do the Y to Delta ONLY if we have NON-ZERO windings (rs and xs != 0)
+		if( (r1+x1)!=0 && (r2+x2)!=0){
+			y_1  = (new Complex(r1,x1)).reciprocal();
+			y_2  = (new Complex(r2,x2)).reciprocal();
+			y_3  =  new Complex(g1+g2,b1+b2);
+			sum  = y_1.plus(y_2.plus(y_3));
+			y_12 = (y_1.times(y_2)).divides(sum); // T1 to  T2 ( line admittance)
+			y_13 = (y_1.times(y_3)).divides(sum); // T1 to GND (shunt admittance - 1st bus)
+			y_23 = (y_2.times(y_3)).divides(sum); // T2 to GND (shunt admittance - 2nd bus)
+		}
+		// If we have a zero winding (r,x=0), we model with a classic Pi model (r+jx-line imp; (g+jb)/2-shunt adm)
+		else{
+			y_12 = (new Complex(r1+r2, x1+x2)).reciprocal();
+			y_13 =  new Complex((g1+g2)/2.0, (b1+b2)/2.0);
+			y_23 =  y_13;
+		}
 
 		// Pack the Line and Shunt Admittance together (first line, then shunt)
-		Complex[] admittancePackage = new Complex[2];
-		admittancePackage[0] = (new Complex(r, x)).reciprocal();
-		admittancePackage[1] =  new Complex(g/2.0, b/2.0);
-		return admittancePackage;
+		Complex[] admittancePackage = new Complex[3];
+		admittancePackage[0] = y_12; // T1 to  T2 ( line admittance)
+		admittancePackage[1] = y_13; // T1 to GND (shunt admittance - 1st bus)
+		admittancePackage[2] = y_23; // T2 to GND (shunt admittance - 2nd bus)
 		
+		return admittancePackage;
 	}
 
 	// #########################################################################

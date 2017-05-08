@@ -58,7 +58,6 @@ public class VirtualBus {
 
 	//### Print Included Nodes
 	public void printOut(){
-		System.out.println("-------------------------------------");
 		System.out.println("##### Included Nodes:");
 		for(int k=0; k<includedConnNodes.size(); k++){
 			System.out.println(includedConnNodes.get(k).object_id);
@@ -67,6 +66,7 @@ public class VirtualBus {
 		for(int k=0; k<includedTerminals.size(); k++){
 			System.out.println(includedTerminals.get(k).object_id);
 		}
+		System.out.println("-------------------------------------");
 	}
 	
 }
