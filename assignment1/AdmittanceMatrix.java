@@ -290,14 +290,12 @@ public class AdmittanceMatrix {
 	// ###############################################################################
 	// Calculates the COMPLEX Line and Shunt Admittances of an AC Line Segment !!!!!!!
 	private Complex[] calcLineAdmittances(MyObject line, ArrayList<MyObject> baseVoltages, double basePower){
-		double r=0;	double x=0;
-		double b=0;	double g=0;
-		double baseVolt=0;
 		if(!line.object_type.equals("cim:ACLineSegment")){
 			System.out.println("Analyzed Object not an AC Line Segment - Cannot Calculate Admittance!!!");
 			System.out.println("Please Check Object "+line.object_type+" \"" +line.object_id+ "\"" );
 			terminateProgram();
 		}
+		double r, x, g, b, baseVolt;
 		baseVolt = getBaseVoltValue(line.extractDataFiled("cim:ConductingEquipment.BaseVoltage"),baseVoltages);
 		double baseImp = baseVolt*baseVolt/basePower;
 		
