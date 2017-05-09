@@ -17,7 +17,7 @@ public class Test {
 		DB.CreateDBDefault();
 		
 		double basePower = 1000; // in MW!!!!!!!!!!!!!!
-		AdmittanceMatrix test = new AdmittanceMatrix();
+		AdmittanceMatrix_withBusbarChecking test = new AdmittanceMatrix_withBusbarChecking();
 		test.calculateAdmMatrix(eq_path, ssh_path, basePower);
 		
 	}

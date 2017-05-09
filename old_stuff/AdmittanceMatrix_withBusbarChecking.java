@@ -1,16 +1,18 @@
-package assignment1;
+package old_stuff;
 
 import java.util.ArrayList;
+
 import org.w3c.dom.Document;
 
-// TODO We have also included all the shunt elements (gs and bs) in our Y Bus Matrix
-// TODO For Line Segments a Standard Pi Model was utilized
-// TODO For Transformers the Proposed CIM Pi Model was utilized: 
-//      Parsing both for one winding concentrated impedance representation (typical for 2 winding transformers)
-//      and distributed winding impedances representation (typical for 3 winding transformers) -> please check lines 341-348
-// TODO All Parallel Admittances were Accounted for (if a new parallel object emerges - it is simply added to previous admittances)
+// TODO For the Transformer Model Please check lines - 356-363
+// TODO Our code accounts for parallel lines (if it finds a new parallel object - it simply adds it to the previous admittance)
 
-public class AdmittanceMatrix {
+
+// TODO Currently we are Merging All Connectivity Nodes connected with a Closed Breaker or a Busbar Section
+// TODO [ while in our CIM examples the checking over busbar sections is not needed - since each section has only one terminal, ]
+// TODO [ in order to keep our code as general as possible, we have decided to keep the busbar checking inside -  just in case! ]
+
+public class AdmittanceMatrix_withBusbarChecking {
 	
 	public Complex[][] calculateAdmMatrix(String eq_path, String ssh_path, double basePower){
 		
@@ -37,7 +39,13 @@ public class AdmittanceMatrix {
 			}
 		}
 		
-		//###### 3) Extract Breakers (just closed ones):
+		//###### 3) Extract Busbar Sections:
+		//THIS ONE WE PROBABLY DON'T NEED!!!
+		object = "cim:BusbarSection";
+		data_fields = new String[0];
+		ArrayList<MyObject> busbarSections = parser.parseXML(doc_eq, doc_ssh, object, data_fields);
+		
+		//###### 4) Extract Breakers (just closed ones):
 		object = "cim:Breaker";
 		data_fields = new String[] {"cim:Switch.open"};
 		ArrayList<MyObject> breakers = parser.parseXML(doc_eq, doc_ssh, object, data_fields);
@@ -48,12 +56,12 @@ public class AdmittanceMatrix {
 			}
 		}
 		
-		//###### 4) Extract AC Line Segments:
+		//###### 5) Extract AC Line Segments:
 		object = "cim:ACLineSegment";
 		data_fields = new String[] {"cim:ACLineSegment.r", "cim:ACLineSegment.x", "cim:ACLineSegment.bch", "cim:ACLineSegment.gch", "cim:ConductingEquipment.BaseVoltage"};
 		ArrayList<MyObject> acLineSegments = parser.parseXML(doc_eq, doc_ssh, object, data_fields);
 		
-		//###### 5) Extract Power Transformer Ends:
+		//###### 6) Extract Power Transformer Ends:
 		object = "cim:PowerTransformerEnd";
 		data_fields = new String[] {"cim:PowerTransformerEnd.r", "cim:PowerTransformerEnd.x", "cim:PowerTransformerEnd.b", "cim:PowerTransformerEnd.g", "cim:TransformerEnd.BaseVoltage","cim:TransformerEnd.Terminal","cim:PowerTransformerEnd.PowerTransformer"};
 		ArrayList<MyObject> powerTransformerEnds = parser.parseXML(doc_eq, doc_ssh, object, data_fields);
@@ -68,7 +76,7 @@ public class AdmittanceMatrix {
 			}
 		}
 		
-		//###### 6) Extract Base Voltages:
+		//###### 7) Extract Base Voltages:
 		object = "cim:BaseVoltage";
 		data_fields = new String[] {"cim:BaseVoltage.nominalVoltage"};
 		ArrayList<MyObject> baseVoltages = parser.parseXML(doc_eq, doc_ssh, object, data_fields);
@@ -90,7 +98,7 @@ public class AdmittanceMatrix {
 		//###### Check if the Virtual Buses are Connected, and if so, Merge them
 		for(int k=0; k<virtualBuses.size(); k++){
 			for(int j=k+1; j<virtualBuses.size(); j++){
-				if(checkForElecticalConnection(virtualBuses.get(k), virtualBuses.get(j), breakers)){
+				if(checkForElecticalConnection(virtualBuses.get(k), virtualBuses.get(j), busbarSections, breakers)){
 					virtualBuses.get(k).addMultNodes(virtualBuses.get(j).includedConnNodes);
 					virtualBuses.get(k).addMultTerminals(virtualBuses.get(j).includedTerminals);
 					virtualBuses.remove(j--);
@@ -173,14 +181,23 @@ public class AdmittanceMatrix {
 		
 		return YBusMatrix;
 	}
-
+	
+	
 	// #######################################################################################################################
-	// Checks if given Buses are connected over a Closed Breaker (if so returns TRUE):
-	private boolean checkForElecticalConnection(VirtualBus firstBus, VirtualBus secondBus, ArrayList<MyObject> breakers){
+	// Checks if given Buses are connected over a busbar /Closed Breaker (if so returns TRUE):
+	private boolean checkForElecticalConnection(VirtualBus firstBus, VirtualBus secondBus, ArrayList<MyObject> busbarSections, ArrayList<MyObject> breakers){
 		
 		for(int j=0; j<firstBus.includedTerminals.size();j++){
 			String condEqId = firstBus.includedTerminals.get(j).extractDataFiled("cim:Terminal.ConductingEquipment").substring(1);
 			boolean isBusbarOrBreaker = false;
+			
+			// Check if the given terminal a busbar (NOT NEEDED - each section has only 1 terminal, but still it makes the code more robust)
+			for(int k=0; k<busbarSections.size(); k++){
+				if(busbarSections.get(k).object_id.equals(condEqId)){
+					isBusbarOrBreaker = true;
+					break;
+				}
+			}
 			
 			// Check if the given terminal a closed breaker
 			for(int k=0; k<breakers.size(); k++){
@@ -347,7 +364,6 @@ public class AdmittanceMatrix {
 		//                            |                         |
 		//                           GND                       GND
 		
-		// In case we have a concentrated impedance representation - the zero elements will not affect the final admittance
 		y_12 = (new Complex(r1+r2,x1+x2)).reciprocal(); // T1 to  T2 ( (r+jx)^-1 )
 		y_13 =  new Complex(g1,b1);						// T1 to GND (just g1+jb1)
 		y_23 =  new Complex(g2,b2);						// T2 to GND (just g2+jb2)

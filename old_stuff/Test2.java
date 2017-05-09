@@ -13,7 +13,7 @@ public class Test2 {
 		String eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
 		String ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 		
-		AdmittanceMatrix test = new AdmittanceMatrix();
+		AdmittanceMatrix_withBusbarChecking test = new AdmittanceMatrix_withBusbarChecking();
 		
 		test.calculateAdmMatrix(eq_path, ssh_path, basePower);
 		
