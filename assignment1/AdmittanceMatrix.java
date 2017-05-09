@@ -390,7 +390,7 @@ public class AdmittanceMatrix {
 	private void terminateProgram(){
 		try {
 			Clip clip = AudioSystem.getClip();
-			File file = new File("C:/Users/Matteo/workspace/Assignment_1/src/doh.wav");
+			File file = new File("./src/doh.wav");
 		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
 		    clip.open(inputStream);
 		    clip.start(); 
