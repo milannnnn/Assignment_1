@@ -3,12 +3,15 @@ package assignment1;
 import java.util.ArrayList;
 import org.w3c.dom.Document;
 
-// TODO We have also included all the shunt elements (gs and bs) in our Y Bus Matrix
+// TODO This method calculates the Y Bus matrix for both the 5 bus and 21 bus CIM files
+// TODO All Shunt Elements (gs and bs) were included in our Y Bus Matrix
 // TODO For Line Segments a Standard Pi Model was utilized
-// TODO For Transformers the Proposed CIM Pi Model was utilized: 
+// TODO For Transformers the Proposed CIM (IEC 61970-452) Pi Model was utilized: 
 //      Parsing both for one winding concentrated impedance representation (typical for 2 winding transformers)
-//      and distributed winding impedances representation (typical for 3 winding transformers) -> please check lines 341-348
+//      and distributed winding impedances representation (typical for 3 winding transformers) -> please check lines 344-352
 // TODO All Parallel Admittances were Accounted for (if a new parallel object emerges - it is simply added to previous admittances)
+// TODO The algorithm also checks if the terminals are connected or not (in SSH file) -> check lines 35-40
+// TODO The algorithm also handles some common exceptions (bad data, inf. admittances,...) - prints out the cause and terminates
 
 public class AdmittanceMatrix {
 	
@@ -331,7 +334,7 @@ public class AdmittanceMatrix {
 		
 		Complex  y_12, y_13, y_23;
 		
-		// If we detect a infinite admittance transformer - Print Error and Terminate
+		// If we detect a infinite admittance (zero imp.) transformer - Print Error and Terminate
 		if(r1+r2+x1+x2==0){
 			System.out.println("Infinite Admittance (zero impedance) transforemer detected!!!");
 			System.out.println("Please check windings: \""+winding1.object_id+"\" and \""+winding2.object_id+"\"");
@@ -339,15 +342,16 @@ public class AdmittanceMatrix {
 		}
 		
 		// According to "IEC 61970-452" - a Transformer is modeled with a standard Pi Model where the
-		// impedances can be concentrated just in one winding, or distributed over several windings:
+		// impedances can be concentrated just in one winding (eg. in winding 1 => r2, x2, b2, g2 = 0), 
+		// or distributed over several windings (r1, x1, b1, g1, r2, x2, b2, g2 != 0), with given connection:
 		//
-		//                      T1 o--x--[r1+jx1]--x--[r2+jx2]--x--o T2
+		//                 T1 o-------x--[r1+jx1]--x--[r2+jx2]--x-------o T2
 		//                            |                         |
 		//                         [g1+jb1]                  [g2+jb2]
 		//                            |                         |
 		//                           GND                       GND
 		
-		// In case we have a concentrated impedance representation - the zero elements will not affect the final admittance
+		// In case we have a concentrated impedance representation - ZERO ELEMENTS WILL NOT AFFECT the FINAL ADMITTANCE!!!
 		y_12 = (new Complex(r1+r2,x1+x2)).reciprocal(); // T1 to  T2 ( (r+jx)^-1 )
 		y_13 =  new Complex(g1,b1);						// T1 to GND (just g1+jb1)
 		y_23 =  new Complex(g2,b2);						// T2 to GND (just g2+jb2)
