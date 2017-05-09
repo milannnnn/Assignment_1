@@ -9,6 +9,9 @@ import java.util.ArrayList;
 
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.w3c.dom.Document;
@@ -196,6 +199,18 @@ public class MyParser {
     //###################################################################################################
 	@SuppressWarnings("deprecation")
 	public void terminateProgram(){
+	// Homer sound
+		try {
+			Clip clip = AudioSystem.getClip();
+			File file = new File("C:/Users/Matteo/workspace/Assignment_1/src/doh.wav");
+		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+		    clip.open(inputStream);
+		    clip.start(); 
+		} 
+		catch (Exception e) {
+			System.err.println(e.getMessage());
+		}	
+		
 	// Method for terminating the program (in case of exceptions and errors)
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)\n");
 		Thread.currentThread().stop();

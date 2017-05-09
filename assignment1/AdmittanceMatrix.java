@@ -1,6 +1,12 @@
 package assignment1;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import org.w3c.dom.Document;
 
 // TODO This method calculates the Y Bus matrix for both the 5 bus and 21 bus CIM files
@@ -382,6 +388,16 @@ public class AdmittanceMatrix {
 	// Method for terminating the program (in case of exceptions and errors)
 	@SuppressWarnings("deprecation")
 	private void terminateProgram(){
+		try {
+			Clip clip = AudioSystem.getClip();
+			File file = new File("C:/Users/Matteo/workspace/Assignment_1/src/doh.wav");
+		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+		    clip.open(inputStream);
+		    clip.start(); 
+		} 
+		catch (Exception e) {
+			System.err.println(e.getMessage());
+		}	
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
 		Thread.currentThread().stop();
 	}

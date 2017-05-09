@@ -1,8 +1,13 @@
 package assignment1;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 //import java.util.Scanner;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class SQLprinter {
 	// remember to import driver library ----> use bildbath
@@ -234,6 +239,16 @@ public class SQLprinter {
 	// method to kill the program
 	@SuppressWarnings("deprecation")
 	public void kill(){
+		try {
+			Clip clip = AudioSystem.getClip();
+			File file = new File("C:/Users/Matteo/workspace/Assignment_1/src/doh.wav");
+		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+		    clip.open(inputStream);
+		    clip.start(); 
+		} 
+		catch (Exception e) {
+			System.err.println(e.getMessage());
+		}	
 		System.out.println("\n=> Program Intentionally Terminated (Kill it before it lays eggs!!!)");
 		Thread.currentThread().stop();
 	}
