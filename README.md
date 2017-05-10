@@ -2,9 +2,9 @@ The JAVA source files (src folder) for the 1st Assignment.
 
 
 
-All the code is presented in the Assignmet1 Folder.
+All the code is presented in the "assignmet1" folder.
 
-To start the program please run the RunMe.jar file
+To start the program please run the "RunMe.jar" file
 
 Gui.java 				- Contains the Main GUI Code
 
