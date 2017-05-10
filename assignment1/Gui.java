@@ -12,12 +12,22 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumn;
 
 import assignment1.AdmittanceMatrix;
 import assignment1.CreateDataBase;
+
+// it allows choice between custom and default options (USER, PASS, BASE POWER, EQ and SSH files)
+// it creates both the relation DB and the Y-matrix, displaying it
+// it runs the DB and the Y-matrix creation in separate threads so that when an exception is found 
+	// we can terminate only the relative thread and keep the GUI alive
+// it displays console output with warnings relative to the handled exceptions
+// it displays entity relationship diagram
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
@@ -49,7 +59,7 @@ public class Gui extends JFrame {
 	private JFileChooser fc; 
 	// set boolean variable to allow the choice of custom options
 	boolean	customPath = false;
-	// set default variable
+	// set default variables
 	double basePower = 1000;
 	private String USER = "root";
 	private String PASS = "root";
@@ -70,6 +80,7 @@ public class Gui extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		widthScreen = screenSize.getWidth();
 		heightScreen = screenSize.getHeight();
+		// set the dimension for the console considering different screen resolutions 
 		int consoleHeight, consoleWidth;
 		if(widthScreen>=1920){
 			widthScreen  = 1920.0;
@@ -86,8 +97,7 @@ public class Gui extends JFrame {
 			consoleWidth  = (int) (0.495* widthScreen);
 		}
 		
-//		int myWidth = (int) widthScreen/2;
-//		int myHeight = (int) heightScreen/2;
+		// set the width of text fields
 		int textWidth = (int) (widthScreen/2/500*60);
 		
 		// create RADIO BUTTONS and TEXT TITLE
@@ -110,7 +120,7 @@ public class Gui extends JFrame {
 		group.add(cusb);
 		
 		// create graphical objects
-		// TEXTFIELDS
+		// TEXTFIELDS (USER, PASSWORD, BASE POWER)
 		tf1title = new JTextField("MySQL USERNAME", textWidth);
 		tf1title.setEditable(false);
 		tf1title.setFont(new Font("Serif",Font.BOLD, 18));
@@ -149,7 +159,7 @@ public class Gui extends JFrame {
 		add(BasePowerText);
 		
 		
-		// create buttons to load xml files
+		// create buttons to load xml files and text title
 		// set by default not enabled 
 		Loadtitle = new JTextField("LOAD EQ-SSH FILES", textWidth);
 		Loadtitle.setFont(new Font("Serif",Font.BOLD, 18));
@@ -182,8 +192,8 @@ public class Gui extends JFrame {
 		
 		// create File Chooser
 		fc = new JFileChooser();
+		// set start folder
 		fc.setCurrentDirectory(new File(System.getProperty("user.home")));
-//		fc.setCurrentDirectory(new File("C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1"));
 		// limit choosable files to xml
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".xml", "xml");
 		fc.setFileFilter(filter);
@@ -193,10 +203,12 @@ public class Gui extends JFrame {
 		
 		// create console to display outputs
 		errorText = new JTextArea();
+		// set text color to red
 		errorText.setForeground(Color.RED);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(errorText));
 		System.setOut(printStream);
 		System.setErr(printStream);
+		// add a scroll pane
 		JScrollPane scrollPane1 = new JScrollPane(errorText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane1.setPreferredSize(new Dimension(consoleWidth,consoleHeight));
 		add(scrollPane1);
@@ -213,7 +225,7 @@ public class Gui extends JFrame {
 		defb.addItemListener(clickhandler);
 		cusb.addItemListener(clickhandler);
 		
-		// handle paths choice
+		// handle path choice
 		FileChoiceHandler FCHandler = new FileChoiceHandler();
 		loadEQ.addActionListener(FCHandler);
 		loadSSH.addActionListener(FCHandler);
@@ -256,8 +268,8 @@ public class Gui extends JFrame {
 				// set the variable to default values
 				USER = "root";
 				PASS = "root";
-				EQpath  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
-				SSHpath = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
+				EQpath  = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
+				SSHpath = "C:\\Users\\Milan\\Desktop\\KTH\\Semester 2\\Computer Applications in Power Systems - EH2745\\Assignments\\1st\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
 				// set boolean variable for custom choice false
 				customPath = false;
 				// set all graphical objects to uneditable except from the button to actually create DB and Y-matrix
@@ -323,8 +335,18 @@ public class Gui extends JFrame {
 					buttYM.setEnabled(customPath);
 				}
 				catch(NumberFormatException ex){ 
-					// if the inserted text in not a number ask to digit again and disable Y-matrix button
-					JOptionPane.showMessageDialog(null, "Base Power has to be a number!!");
+					// if the inserted text is not a number ask to digit again and disable Y-matrix button
+					try {
+						Clip clip = AudioSystem.getClip();
+						File file = new File("./src/doh.wav");
+					    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+					    clip.open(inputStream);
+					    clip.start(); 
+					} 
+					catch (Exception e) {
+						System.err.println(e.getMessage());
+					}	
+					JOptionPane.showMessageDialog(null, "Base Power has to be a number!");
 					buttYM.setEnabled(!customPath);
 				}
 			}
@@ -413,11 +435,11 @@ public class Gui extends JFrame {
 							double im = val.im();
 							String sign = "";
 							String space = "";
-							// if real part is positive add plus
+							// if imaginary part is positive add plus
 							if(im >= 0){
 								sign = "+";
 							}
-							// if real part is negative add minus
+							// if imaginary part is negative add minus
 							else{
 								im = -im;
 								sign = "-";
@@ -427,7 +449,7 @@ public class Gui extends JFrame {
 								real = -real;
 								space = "-";
 							}
-							// add empty space before real positive part
+							// add empty space before real positive part to keep alignment
 							else{
 								space =" ";
 							}
@@ -443,11 +465,11 @@ public class Gui extends JFrame {
 					}
 					// create table with given matrix and column names
 					JTable Table = new JTable(AMString, names);
-					// disable autoresize
+					// disable auto-resize
 					Table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 					// set Font
 					Table.setFont(new Font("Serif",Font.PLAIN, 22));
-					// set column width
+					// set columns' width
 					TableColumn column = null;
 				    for (int i = 0; i < AMString.length; i++) {
 				        column = Table.getColumnModel().getColumn(i);

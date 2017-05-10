@@ -9,12 +9,12 @@ import org.w3c.dom.Document;
 // It declares PRIMARY AND FOREIGN KEYS for each table AUTOMATICALLY
 	// It recognizes the need for a foreign key when a parsed attribute starts with '#'
 	// It determines the name of the table, where to find the primary key, a certain foreign key is related to
-	// e.g. given the attribute "cim:PowerTransformerEnd.PowerTransformer" of owerTransformerEnd it reads "PowerTransformer"
-	//  and set it as the name of the table the foreign key is pointing at
-// It handles the problem about substation and region, i.e. it would violate foreign key constraint
+	// e.g. given the attribute "cim:PowerTransformerEnd.PowerTransformer" of PowerTransformerEnd it reads "PowerTransformer"
+	//  and sets it as the name of the table the foreign key is pointing at
+// It handles the problem about substation and region: it would violate foreign key constraints
 	// since no table about region is required to be created
 // It handles the problem about synchronousMachine's attribute generatingUnit, which points either towards 
- 	// thermalGeneratingUnit (only big XML file) or GeneratingUnit object, creating again problem with foreign key constraint
+ 	// thermalGeneratingUnit (only big XML file) or GeneratingUnit object, creating again problems with foreign key constraints
 	// The problem has been solved grouping both objects (thermalGeneratingUnit and GeneratingUnit) in the same table
 
 public class CreateDataBase {
