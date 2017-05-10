@@ -71,9 +71,12 @@ public class MyParser {
 		
 		ArrayList<MyObject> ObjectList = new ArrayList<MyObject>();
 
-		// Find all Elements with Required Object
+		// Find all Elements with Required Object possibly
 		NodeList NL1 = doc_eq.getElementsByTagName(object);
 		NodeList NL2 = doc_ssh.getElementsByTagName(object);
+		if(NL1.getLength()==0){
+			System.out.println("ATTENTION: Objects \""+object+"\" are missing from EQ file (could indicate a bad file)!");
+		}
 		
 		// Parse all Elements found in the EQ node list (since all elements from SSH are already contained within EQ)
 		for(int j=0; j<NL1.getLength(); j++){
@@ -142,13 +145,22 @@ public class MyParser {
 			}
 			// If it still throws an exception we have a problem with required data field!!!
 			catch(java.lang.NullPointerException e){
-				System.out.println("WARNING: Required data attribute not found (probably missing or misspelled)");
-				System.out.println("Please check for data field \""+data+"\" inside \""+id+"\" object!!!");
+				if(!id.equals("")){
+					System.out.println("WARNING: Required data attribute not found (probably missing or misspelled)");
+					System.out.println("Please check for data field \""+data+"\" inside \""+id+"\" object!!!");
+				}
+				else{
+					System.out.println("WARNING: Empty Object ID Detected - Please check selected EQ/SSH files and try again!!!");
+				}
 				
 				// Kill the program - Force the Human to correct its mistake (so it feels important)!!! 
 				// (otherwise we could have also continued the PROGRAM by writing a NULL element)!!!
 				terminateProgram();
-			}						
+			}
+			catch(Exception e2){
+				System.out.println("WARNING: There is an unexpected problem => Please check if correct EQ/SSH files have been selected and try again!!!");
+				terminateProgram();
+			}
 		}
 		return null;
 	}
