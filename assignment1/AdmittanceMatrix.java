@@ -1,14 +1,13 @@
 package assignment1;
 
-//import java.io.File;
 import java.util.ArrayList;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import org.w3c.dom.Document;
 
-// ########################### Class Admittance Matrix Calculation ###########################
-//--------------------------------------------------------------------------------------------
+// ################################################# Class Admittance Matrix Calculation #################################################
+//----------------------------------------------------------------------------------------------------------------------------------------
 // ### The Algorithm first abstracts all Node connected over closed breakers into Virtual Buses, and then,
 //     based on those Virtual Buses, creates a Y Bus Matrix by adding AC Line Segments and Transformer Windings
 // ### The algorithm confirms Terminal Connection ("cim:ACDCTerminal.connected" field from SSH file)
@@ -191,18 +190,18 @@ public class AdmittanceMatrix {
 		
 		for(int j=0; j<firstBus.includedTerminals.size();j++){
 			String condEqId = firstBus.includedTerminals.get(j).extractDataFiled("cim:Terminal.ConductingEquipment").substring(1);
-			boolean isBusbarOrBreaker = false;
+			boolean isClosedBreaker = false;
 			
 			// Check if the given terminal a closed breaker
 			for(int k=0; k<breakers.size(); k++){
-				if(breakers.get(k).object_id.equals(condEqId) || isBusbarOrBreaker){
-					isBusbarOrBreaker = true;
+				if(breakers.get(k).object_id.equals(condEqId) || isClosedBreaker){
+					isClosedBreaker = true;
 					break;
 				}
 			}
 			
 			// If it is, check if it is contained in Second Bus, and if so, return TRUE
-			if(isBusbarOrBreaker){
+			if(isClosedBreaker){
 				for(int k=0; k<secondBus.includedTerminals.size(); k++){
 					if(secondBus.includedTerminals.get(k).extractDataFiled("cim:Terminal.ConductingEquipment").substring(1).equals(condEqId)){
 						return true;
