@@ -4,22 +4,32 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-//import java.util.concurrent.TimeUnit;
-
-
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.xml.parsers.DocumentBuilder;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
-// TODO - Maybe update it so that it can read multiple children tags with the same name (not just to read the first and finish)!!!
+// ##### Class for Reading and Parsing XML files over required Object and Extracting ALL Required Data Fields #####
+// ----------------------------------------------------------------------------------------------------------------
+// ### Automatically Tracks and Extracts Required Data FieldS (in presented order):
+//  1) It tries to read Tag Text Content (from EQ file), and if empty
+//  2) It tries to read the Resource Attribute (from EQ file), and if empty
+//  3) It finds the matching SSH object (by ID) from the SSH file,
+//  4) It tries to read Tag Text Content (from SSH file), and if empty
+//  5) It tries to read the Resource Attribute (from SSH file)
+//
+// ### Extracts even BaseVoltageID Field (not contained inside original object):
+//  1) It reads the EquipmentContainer Data Field (pointer to Voltage Level) 
+//  2) It tracks the required Voltage Level (by ID matching)
+//  3) It extracts and returns the "VoltageLevel.BaseVoltage" Data Field
+//
+// ### Handles a s#!@ton of common exceptions (bad data, missing fields, wrong files, reading, I/O,...)
+//  => Prints out HUMAN-Readable warning pointing to exception cause and terminates the parser
 
 public class MyParser {
 	

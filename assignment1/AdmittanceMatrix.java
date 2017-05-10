@@ -2,22 +2,24 @@ package assignment1;
 
 //import java.io.File;
 import java.util.ArrayList;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-
 import org.w3c.dom.Document;
 
-// TODO This method calculates the Y Bus matrix for both the 5 bus and 21 bus CIM files
-// TODO All Shunt Elements (gs and bs) were included in our Y Bus Matrix
-// TODO For Line Segments a Standard Pi Model was utilized
-// TODO For Transformers the Proposed CIM (IEC 61970-452) Pi Model was utilized: 
-//      Parsing both for one winding concentrated impedance representation (typical for 2 winding transformers)
-//      and distributed winding impedances representation (typical for 3 winding transformers) -> please check lines 344-352
-// TODO All Parallel Admittances were Accounted for (if a new parallel object emerges - it is simply added to previous admittances)
-// TODO The algorithm also checks if the terminals are connected or not (in SSH file) -> check lines 35-40
-// TODO The algorithm also handles some common exceptions (bad data, inf. admittances,...) - prints out the cause and terminates
+// ########################### Class Admittance Matrix Calculation ###########################
+//--------------------------------------------------------------------------------------------
+// ### The Algorithm first abstracts all Node connected over closed breakers into Virtual Buses, and then,
+//     based on those Virtual Buses, creates a Y Bus Matrix by adding AC Line Segments and Transformer Windings
+// ### The algorithm confirms Terminal Connection ("cim:ACDCTerminal.connected" field from SSH file)
+// ### The Algorithm Successfully calculates the Y Bus matrix both for5 bus and 21 bus systems (micro CIM and total CIM files)
+// ### The Algorithm Includes all Shunt Elements (gs and bs) in the Y Bus Matrix calculation
+// ### The Algorithm Accounts for All Parallel Admittances (if a parallel object emerges - it is simply added to previous admittance at that position)
+// ### AC Line Segments were modeled with a Standard Pi Line Model
+// ### Transformers were modeled with the Proposed CIM (IEC 61970-452) Pi Model (please check lines - 352-360 for the model):
+//  1) In case of one side concentrated impedance, typical for 2 winding transformers, it simply adds those admittances to corresponding side
+//  2) In case of distributed impedances,  typical for 3 winding transformers, it calculated admittances according to the Pi Model
+// ### The Algorithm also handles some common exceptions (bad data, inf. admittances,...) - prints out the cause and terminates
 
 public class AdmittanceMatrix {
 	
@@ -357,7 +359,8 @@ public class AdmittanceMatrix {
 		//                            |                         |
 		//                           GND                       GND
 		
-		// In case we have a concentrated impedance representation - ZERO ELEMENTS WILL NOT AFFECT the FINAL ADMITTANCE!!!
+		// In case we have a concentrated impedance representation - ZERO ELEMENTS WILL NOT AFFECT the  FINAL ADMITTANCE!!!
+		// In case we have a  distributed impedance representation - ALL elements will get added to the FINAL ADMITTANCE!!!
 		y_12 = (new Complex(r1+r2,x1+x2)).reciprocal(); // T1 to  T2 ( (r+jx)^-1 )
 		y_13 =  new Complex(g1,b1);						// T1 to GND (just g1+jb1)
 		y_23 =  new Complex(g2,b2);						// T2 to GND (just g2+jb2)
