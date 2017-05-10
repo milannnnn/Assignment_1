@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 
 // ##### Class for Reading and Parsing XML files over required Object and Extracting ALL Required Data Fields #####
 // ----------------------------------------------------------------------------------------------------------------
-// ### Automatically Tracks and Extracts Required Data FieldS (in presented order):
+// ### Automatically Tracks and Extracts Required Data Fields (in presented order):
 //  1) It tries to read Tag Text Content (from EQ file), and if empty
 //  2) It tries to read the Resource Attribute (from EQ file), and if empty
 //  3) It finds the matching SSH object (by ID) from the SSH file,
@@ -85,7 +85,7 @@ public class MyParser {
 		NodeList NL1 = doc_eq.getElementsByTagName(object);
 		NodeList NL2 = doc_ssh.getElementsByTagName(object);
 		if(NL1.getLength()==0){
-			System.out.println("ATTENTION: Objects \""+object+"\" are missing from EQ file (could indicate a bad file)!");
+			System.out.println("ATTENTION NOTICE: Objects \""+object+"\" are missing from EQ file (could indicate a bad file)!");
 		}
 		
 		// Parse all Elements found in the EQ node list (since all elements from SSH are already contained within EQ)

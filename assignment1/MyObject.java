@@ -1,5 +1,6 @@
 package assignment1;
 
+// ### SIMPLE Object Container Class - for CIM Data Extraction
 public class MyObject {
 	
 	public String object_type;
