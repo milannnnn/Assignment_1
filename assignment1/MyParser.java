@@ -214,8 +214,9 @@ public class MyParser {
 	// Homer sound
 		try {
 			Clip clip = AudioSystem.getClip();
-			File file = new File("./src/doh.wav");
-		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+//			File file = new File("./src/doh.wav");
+//		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+		    AudioInputStream inputStream = AudioSystem.getAudioInputStream(Gui.class.getResource("/doh.wav"));
 		    clip.open(inputStream);
 		    clip.start(); 
 		} 

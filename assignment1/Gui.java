@@ -338,8 +338,8 @@ public class Gui extends JFrame {
 					// if the inserted text is not a number ask to digit again and disable Y-matrix button
 					try {
 						Clip clip = AudioSystem.getClip();
-						File file = new File("./src/doh.wav");
-					    AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+//						File file = new File("./src/doh.wav");
+					    AudioInputStream inputStream = AudioSystem.getAudioInputStream(Gui.class.getResource("/doh.wav"));
 					    clip.open(inputStream);
 					    clip.start(); 
 					} 
@@ -400,7 +400,8 @@ public class Gui extends JFrame {
 					// image
 					BufferedImage myPicture;
 					try {
-						myPicture = ImageIO.read(new File("./src/EntityRelationshipDiagram.jpg"));
+//						myPicture = ImageIO.read(new File("./src/EntityRelationshipDiagram.jpg"));
+						myPicture = ImageIO.read(Gui.class.getResource("/EntityRelationshipDiagram.jpg"));
 						JLabel picLabel = new JLabel(new ImageIcon(myPicture));
 						JScrollPane scrollPane2 = new JScrollPane(picLabel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 						scrollPane2.setPreferredSize(new Dimension((int) (0.8*widthScreen), (int) (0.8*heightScreen)));
