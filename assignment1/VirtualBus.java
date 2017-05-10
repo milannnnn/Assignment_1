@@ -2,6 +2,7 @@ package assignment1;
 
 import java.util.ArrayList;
 
+//### SIMPLE Object Container Class - for Abstracting Connected Nodes
 public class VirtualBus {
 	
 	public ArrayList<MyObject> includedConnNodes;
