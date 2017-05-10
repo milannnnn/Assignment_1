@@ -4,7 +4,18 @@ import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 
-//Milan remember to change file path for you and also password for SQL. You just need to uncomment line 35-36-173
+// It Creates a DB starting from the objects to parse, the attributes about each object,
+	// the name to give to each table, and relative columns
+// It declares PRIMARY AND FOREIGN KEYS for each table AUTOMATICALLY
+	// It recognizes the need for a foreign key when a parsed attribute starts with '#'
+	// It determines the name of the table, where to find the primary key, a certain foreign key is related to
+	// e.g. given the attribute "cim:PowerTransformerEnd.PowerTransformer" of owerTransformerEnd it reads "PowerTransformer"
+	//  and set it as the name of the table the foreign key is pointing at
+// It handles the problem about substation and region, i.e. it would violate foreign key constraint
+	// since no table about region is required to be created
+// It handles the problem about synchronousMachine's attribute generatingUnit, which points either towards 
+ 	// thermalGeneratingUnit (only big XML file) or GeneratingUnit object, creating again problem with foreign key constraint
+	// The problem has been solved grouping both objects (thermalGeneratingUnit and GeneratingUnit) in the same table
 
 public class CreateDataBase {
 	
@@ -28,7 +39,6 @@ public class CreateDataBase {
 	private String[] RatioTapChangerAttribute;
 	private ArrayList<String[]> AttList;
 	private ArrayList<String[]> ColumNamesList;
-//	private ArrayList<String[]> forKeyTabNameList;
 	
 	// ############################################################################################################
 	// default constructor
@@ -40,9 +50,6 @@ public class CreateDataBase {
 		
 		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_EQ_V2.xml";
 		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\MicroGridTestConfiguration_T1_BE_SSH_V2.xml";
-		
-//		eq_path  = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_EQ_V2.xml";
-//		ssh_path = "C:\\Users\\Matteo\\Documents\\Kic InnoEnergy\\KTH\\Computer application\\Assignment 1\\Total_MG_T1_SSH_V2.xml";
 		
 		USER = "root";
 		PASS = "root";
@@ -85,20 +92,13 @@ public class CreateDataBase {
 		// Column Names List: list of names we want to give to each column
 		String[] BaseVoltageColName = new String[] {"ID","nominalVoltage"};
 		String[] SubstationColName = new String[]{"ID","IdentifiedObject_name","Substation_Region"};
-//		String[] VolatgeLevelColName = new String[]{"ID","IdentifiedObject_name","VoltageLevel_Substation","VoltageLevel_BaseVoltage"};
 		String[] VolatgeLevelColName = new String[]{"ID","IdentifiedObject_name","Substation_ID","BaseVoltage_ID"};
-//		String[] GeneratingUnitColName = new String[]{"ID","IdentifiedObject_name","GeneratingUnit_maxOperatingP","GeneratingUnit_minOperatingP","Equipment_EquipmentContainer"};
 		String[] GeneratingUnitColName = new String[]{"ID","IdentifiedObject_name","GeneratingUnit_maxOperatingP","GeneratingUnit_minOperatingP","Substation_ID"};
 		String[] RegulatingControlColName = new String[]{"ID","IdentifiedObject_name","RegulatingControl_targetValue"};
-//		String[] SynchronousMachineColName = new String[]{"ID","IdentifiedObject_name","RotatingMachine_ratedS","RotatingMachine_p","RotatingMachine_q","RotatingMachine_GeneratingUnit","RegulatingCondEq_RegulatingControl", "Equipment_EquipmentContainer","baseVoltage"};
 		String[] SynchronousMachineColName = new String[]{"ID","IdentifiedObject_name","RotatingMachine_ratedS","RotatingMachine_p","RotatingMachine_q","GeneratingUnit_ID","RegulatingControl_ID", "voltageLevel_ID","baseVoltage_ID"};
-//		String[] PowerTransformerColName = new String[]{"ID","IdentifiedObject_name","Equipment_EquipmentContainer"};
 		String[] PowerTransformerColName = new String[]{"ID","IdentifiedObject_name","Substation_ID"};
-//		String[] EnergyConsumerColName = new String[]{"ID","IdentifiedObject_name","EnergyConsumer_p","EnergyConsumer_q","Equipment_EquipmentContainer","baseVoltage"};
 		String[] EnergyConsumerColName = new String[]{"ID","IdentifiedObject_name","EnergyConsumer_p","EnergyConsumer_q","voltageLevel_ID","baseVoltage_ID"};
-//		String[] PowerTransformerEndColName = new String[]{"ID","IdentifiedObject_name","PowerTransformerEnd_r","PowerTransformerEnd_x","PowerTransformerEnd_PowerTransformer","TransformerEnd_BaseVoltage"};
 		String[] PowerTransformerEndColName = new String[]{"ID","IdentifiedObject_name","PowerTransformerEnd_r","PowerTransformerEnd_x","PowerTransformer_ID","BaseVoltage_ID"};
-//		String[] BreakerColName = new String[]{"ID","IdentifiedObject_name","Switch_open","Equipment_EquipmentContainer","baseVoltage"};
 		String[] BreakerColName = new String[]{"ID","IdentifiedObject_name","Switch_open","voltageLevel_ID","baseVoltage_ID"};
 		String[] RatioTapChangerColName = new String[]{"ID","IdentifiedObject_name","TapChanger_step"};
 		// Array list which contains all arrays defined above
@@ -115,34 +115,10 @@ public class CreateDataBase {
 		ColumNamesList.add(BreakerColName);
 		ColumNamesList.add(RatioTapChangerColName);
 		
-//		// foreign key table  names
-//		String[] BaseVoltageforKeyTabName = new String[0];
-//		String[] SubstationforKeyTabName = new String[0];
-//		String[] VolatgeLevelforKeyTabName = new String[]{"Substation","BaseVoltage"};
-//		String[] GeneratingUnitforKeyTabName = new String[]{"Substation"};
-//		String[] RegulatingControlforKeyTabName = new String[0];
-//		String[] SynchronousMachineforKeyTabName = new String[]{"GeneratingUnit","RegulatingControl", "VoltageLevel","BaseVoltage"};
-//		String[] PowerTransformerforKeyTabName = new String[]{"Substation"};
-//		String[] EnergyConsumerforKeyTabName = new String[]{"VoltageLevel","BaseVoltage"};
-//		String[] PowerTransformerEndforKeyTabName = new String[]{"PowerTransformer","BaseVoltage"};
-//		String[] BreakerforKeyTabName = new String[]{"VoltageLevel","BaseVoltage"};
-//		String[] RatioTapChangerforKeyTabName = new String[0];
-//		forKeyTabNameList = new ArrayList<String[]>();
-//		forKeyTabNameList.add(BaseVoltageforKeyTabName);
-//		forKeyTabNameList.add(SubstationforKeyTabName);
-//		forKeyTabNameList.add(VolatgeLevelforKeyTabName);
-//		forKeyTabNameList.add(GeneratingUnitforKeyTabName);
-//		forKeyTabNameList.add(RegulatingControlforKeyTabName);
-//		forKeyTabNameList.add(SynchronousMachineforKeyTabName);
-//		forKeyTabNameList.add(PowerTransformerforKeyTabName);
-//		forKeyTabNameList.add(EnergyConsumerforKeyTabName);
-//		forKeyTabNameList.add( PowerTransformerEndforKeyTabName);
-//		forKeyTabNameList.add(BreakerforKeyTabName);
-//		forKeyTabNameList.add(RatioTapChangerforKeyTabName);
 	}
 	
 	// ############################################################################################################
-	// constructor to customize all the variables declared above
+	// constructor to customize eq_path, ssh_path, USER and PASS
 	public CreateDataBase(String eq_path, String ssh_path, String USER, String PASS){
 		this();
 		this.USER = USER;
@@ -167,7 +143,6 @@ public class CreateDataBase {
 		//SQLprinter newSQLPrinter = new SQLprinter();
 		SQLprinter newSQLPrinter = new SQLprinter(USER,PASS);
 		
-		
 		// for each object of objectList, it extracts the name of the table (TableName), the name of the object (ObjectName), the name of the attributes to parse (Attributes),
 		// the name to give to each column (ColumNames)
 		for(int i=0; i<objectList.length;i++){
@@ -175,10 +150,9 @@ public class CreateDataBase {
 			String ObjectName = objectList[i];
 			String[] Attributes = AttList.get(i);
 			String[] ColumNames = ColumNamesList.get(i);
-//			String[] forKeyTabName = forKeyTabNameList.get(i);
 			
-			// call the method CreateOneTable, to create one table using the extrcted info
-			CreateOneTable(eq_path, ssh_path,  ObjectName, Attributes, TableName, ColumNames, newSQLPrinter);
+			// call the method CreateOneTable, to create one table using the extracted info
+			CreateOneTable(eq_path, ssh_path, ObjectName, Attributes, TableName, ColumNames, newSQLPrinter);
 		}
 		// close connection with database
 		newSQLPrinter.exit();
@@ -207,13 +181,13 @@ public class CreateDataBase {
 			// ignore the relation between substation and region since we don't create a table for region
 			// don't add foreign key constrain
 			if(ObjectName.equals("cim:Substation")){
-				Document doc_eq  = parser.readFile( eq_path);
+				Document doc_eq  = parser.readFile(eq_path);
 				Document doc_ssh = parser.readFile(ssh_path);
 				
 				// parse the XML files and return an ArrayList of parsed objects
 				ArrayList<MyObject> objects = parser.parseXML(doc_eq, doc_ssh, ObjectName, Attributes);
 				
-				// go through the list extract each object and add required data to DB
+				// go through the list, extract each object and add required data to DB
 				for(int i=0; i<objects.size(); i++){
 					MyObject Myobject = objects.get(i);
 					// extract parsed data
@@ -224,7 +198,7 @@ public class CreateDataBase {
 					for(int k=1; k<ParsedValue.length+1;k++){
 						value[k]=ParsedValue[k-1];
 					}
-					// it creates a table is it doesn't exist and it determines primary key
+					// it creates a table if it doesn't exist and it determines primary key
 						// no foreign key is used, 
 						// set the name of the table the foreign key refers to, to an empty array of Strings
 						// set the position of the column where to add the foreign key, as an empty ArrayList
@@ -236,7 +210,7 @@ public class CreateDataBase {
 			
 			// for objects different from substation
 			else{
-				Document doc_eq  = parser.readFile( eq_path);
+				Document doc_eq  = parser.readFile(eq_path);
 				Document doc_ssh = parser.readFile(ssh_path);
 				ArrayList<MyObject> objects = parser.parseXML(doc_eq, doc_ssh, ObjectName, Attributes);
 				
@@ -250,7 +224,7 @@ public class CreateDataBase {
 							objects.add(tempObjects.get(i));
 						}
 					}
-					// in case of Exception if cim:ThermalGeneratingUnit is not found 
+					// in case of Exception, i.e. if cim:ThermalGeneratingUnit is not found 
 					catch(Exception e){
 						objects = parser.parseXML(doc_eq, doc_ssh, ObjectName, Attributes);
 					}
@@ -259,7 +233,7 @@ public class CreateDataBase {
 				for(int i=0; i<objects.size(); i++){
 					// initialize value used later on in a for loop
 					int l=0;
-					// pass is the value used to determine, the necessity of using a foreing key, default value is false
+					// pass is the value used to determine the necessity of using a foreing key. The default value is false
 					boolean pass = false;
 					// initialize an ArrayList of Integers containing the position of the column of the table where a foreign key has to be added
 					ArrayList<Integer> forKeyPos = new ArrayList<Integer>();
@@ -325,8 +299,7 @@ public class CreateDataBase {
 						forKeyTabNameArray = new String[0];
 					}
 
-					// it creates a table is it doesn't exist and it determines primary and foreign keys
-//					newSQLPrinter.insertTable(TableName, ColumNames, forKeyPos, forKeyTabName);
+					// it creates a table if it doesn't exist and it determines primary and foreign keys
 					newSQLPrinter.insertTable(TableName, ColumNames, forKeyPos, forKeyTabNameArray);
 					// insert parsed data in the table
 					newSQLPrinter.insertData(TableName, value);

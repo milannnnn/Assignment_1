@@ -3,11 +3,15 @@ package assignment1;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
-//import java.util.Scanner;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+
+// It initializes a DataBase called "assignment_1_MMMM", 
+// It adds a table to the DB using the method insertTable, declaring PRIMARY and FOREIGN KEYs
+// It adds data to a certain table using the method insertData
+// It updates data using the method upDate
+// It handles SQL and general exceptions
 
 public class SQLprinter {
 	// remember to import driver library ----> use bildbath
@@ -48,7 +52,6 @@ public class SQLprinter {
 			stmt.executeUpdate(sql);
 			sql = "create database if not exists " + dataBaseName; 
 			stmt.executeUpdate(sql);
-//			System.out.println("Database created successfully...");
 			// Connect to the created database 
 //			conn = DriverManager.getConnection(DB_URL + dataBaseName, USER, PASS);
 			
@@ -87,10 +90,6 @@ public class SQLprinter {
 			// use the database
 			String sql = "use " + dataBaseName;
 			stmt.executeUpdate(sql);
-			// delete the table if it already exists
-//			sql = "drop table if exists " + tableName; 
-//			System.out.println(sql);
-//			stmt.executeUpdate(sql);
 			// create the table, all the quantities defined as varchar of 50 length
 			sql = "create table if not exists " + tableName + "(";
 			for(int i = 0; i<attributesName.length; i++){
@@ -100,12 +99,14 @@ public class SQLprinter {
 			// PRIMARY KEY IS THE FIRST ELEMENT
 			sql = sql + "primary key (" + attributesName[0] + "), ";
 			
+			// if the ArrayList with the foreign key position is not empty, declare the foreign keys
 			if(forKeyPos.isEmpty() == false){
-				
+				// check if the number of the positions of the foreign keys coincide with the number of related primary key tables
 				if(forKeyPos.size()==forKeyTabName.length){
 			
 					for(int i=0; i<forKeyPos.size(); i++){
 						sql = sql + "index (" + attributesName[forKeyPos.get(i)] + "), ";
+						// declare foreign key and to which table's primary key (ID) it refers to
 						sql = sql + "foreign key (" + attributesName[forKeyPos.get(i)] + ") references " + forKeyTabName[i] + "(ID), ";
 					}
 				}
@@ -161,7 +162,6 @@ public class SQLprinter {
 		catch(SQLIntegrityConstraintViolationException ecc){
 			ecc.printStackTrace();
 			System.out.println("The foreign key you are trying to add doesn't exist as primary key in any other table!");
-			System.out.println("Probably because Synchronous_Machine_NL-G2's GeneratingUnit points towards a ThermalGeneratingUnit rdf:ID= _ca80ee09-3bed-4884-bc28-6dc89d067289, which is not a table");
 			kill();
 		}
 		catch(SQLException se){
@@ -228,7 +228,6 @@ public class SQLprinter {
 		try {
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			System.out.println("\nError while closing SQL connection! Please check the SQL server, Driver, URL, Connection, Username and Password, and try again!!!");
 			kill();
