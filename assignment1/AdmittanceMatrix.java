@@ -12,7 +12,7 @@ import org.w3c.dom.Document;
 // ### The Algorithm first abstracts all Node connected over closed breakers into Virtual Buses, and then,
 //     based on those Virtual Buses, creates a Y Bus Matrix by adding AC Line Segments and Transformer Windings
 // ### The algorithm confirms Terminal Connection ("cim:ACDCTerminal.connected" field from SSH file)
-// ### The Algorithm Successfully calculates the Y Bus matrix both for5 bus and 21 bus systems (micro CIM and total CIM files)
+// ### The Algorithm Successfully calculates the Y Bus matrix both for 5 bus and 21 bus systems (micro CIM and total CIM files)
 // ### The Algorithm Includes all Shunt Elements (gs and bs) in the Y Bus Matrix calculation
 // ### The Algorithm Accounts for All Parallel Admittances (if a parallel object emerges - it is simply added to previous admittance at that position)
 // ### AC Line Segments were modeled with a Standard Pi Line Model
