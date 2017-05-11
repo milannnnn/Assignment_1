@@ -269,7 +269,7 @@ public class AdmittanceMatrix {
 	}
 
 	// ###########################################################
-	// Checks if certain Object is connected to given Virtual Bus:
+	// Checks if certain Transformer is connected to given Virtual Bus:
 	private String isTrafoConnToBus(String trafoId, VirtualBus vBus, ArrayList<MyObject> powerTransformerEnds){
 		
 		for(int k=0; k<vBus.includedTerminals.size(); k++){
